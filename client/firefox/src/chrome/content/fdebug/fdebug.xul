@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/common/fcms.css" text="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/xbl/xsltemplate.css" text="text/css"?>
+<!DOCTYPE window [
+    <!ENTITY % localeDTD SYSTEM "chrome://fdebug/locale/debug.dtd" >
+    %localeDTD;
+]>  
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   xmlns:html="http://www.w3.org/1999/xhtml" title="fDebug 2.1.0" id="fdebug2::main"
+   persist="screenX screenY width height sizemode" onload="fDebug.init();" onclose="fDebug.shutdown();">
+   
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js"/>
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fpreference.js"/>   
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebug.js"/>
+   
+   <popupset>
+      <popup id="msgboxMenu">
+         <menuitem label="&msgboxMenu.clear;" oncommand="fDebug.clearAll(true)"/>
+         <menuseparator/>
+         <menuitem label="&msgboxMenu.copy;" oncommand="fDebug.copyToClipboard();"/>
+         <menuitem label="&msgboxMenu.save;" disabled="true"/>
+      </popup>
+   </popupset>
+   
+   <vbox style="margin:5px 5px 5px 5px;" flex="1">
+      
+      <dialogheader style="background-color:#fff;" flex="0">
+         <hbox flex="1" align="center" class="maintoolbar">
+            <stack>
+               <image src="chrome://fdebug/content/gfx/logo.png" flex="0"/>
+               <vbox flex="0" style="height:39px">
+                  <hbox flex="0">
+                     <image style="padding-left:35px; padding-top:14px;" flex="0"
+                        src="chrome://fdebug/content/gfx/bug.png"/>
+                     <spacer flex="1"/>
+                  </hbox>
+                  <spacer flex="1"/>
+               </vbox>
+            </stack>
+            <spacer flex="0"
+               style="width:5px; margin-left:3px; height:24px; border-bottom:2px solid #00887f;"/>
+            <label value="DEBUGGER"
+               style="color:#000; height:24px; font-weight:bold; font-family:sans; font-size:14px; padding-top:16px;"/>
+            <spacer flex="1" style="margin-left:3px; height:24px; border-bottom:2px solid #00887f;"/>
+            <toolbarbutton class="configButton" id="setup" label="Setup"
+               oncommand="fDebug.openSetup();"/>
+         </hbox>
+         
+      </dialogheader>
+      
+      <groupbox>
+         <hbox flex="1">
+            <checkbox label="Accept incoming connections" id="conf:accept" oncommand="fDebug.toggleAccept();" flex="0" />
+            <toolbarseparator/>
+            <hbox align="center">
+               <label id="stateLabel" value="" />               
+            </hbox>            
+            <toolbarspacer flex="1"/>
+            <toolbarseparator/>
+            <toolbarbutton oncommand="fDebug.clearAll();" label="&toolbar.clear;"
+               style="padding-left:5px; padding-right:5px;"
+               image="chrome://fdebug/content/gfx/clear.png"/>
+            <toolbarseparator/>
+            <toolbarbutton type="menu" image="chrome://fdebug/content/gfx/settings.png"
+               label="&message.display; ">
+               <menupopup>
+                  <menuitem type="checkbox" checked="true" autocheck="true" id="conf:message" label="&option.show.message;"
+                            oncommand="fPreference.setValue('fdebug.show.message',this.getAttribute('checked')=='true', 'BOOL');" />
+                  <menuitem type="checkbox" checked="true" autocheck="true" id="conf:warning" label="&option.show.warning;"
+                            oncommand="fPreference.setValue('fdebug.show.warning',this.getAttribute('checked')=='true', 'BOOL');" />
+                  <menuitem type="checkbox" checked="true" autocheck="true" id="conf:error" label="&option.show.error;"
+                            oncommand="fPreference.setValue('fdebug.show.error',this.getAttribute('checked')=='true', 'BOOL');" />
+                  <menuitem type="checkbox" checked="true" autocheck="true" id="conf:fatal" label="&option.show.fatal;"
+                            oncommand="fPreference.setValue('fdebug.show.fatal',this.getAttribute('checked')=='true', 'BOOL');" />
+                  <menuseparator/>
+                  <menuitem type="checkbox" checked="true" autocheck="true" id="conf:popup" label="&option.popup;"
+                            oncommand="fPreference.setValue('fdebug.display.popup',this.getAttribute('checked')=='true', 'BOOL');" />
+                  <menuitem type="checkbox" checked="true" autocheck="true" id="conf:live" label="&option.live;"
+                            oncommand="fPreference.setValue('fdebug.display.live',this.getAttribute('checked')=='true', 'BOOL');" />
+               </menupopup>
+            </toolbarbutton>
+         </hbox>
+      </groupbox>
+      
+      <cmsbrowser id="main" flex="1" src="chrome://fdebug/content/fdebug/history.xul" onload="fDebug.initTab(event);" />
+      
+   </vbox>
+
+</window>

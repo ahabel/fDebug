@@ -1,0 +1,11 @@
+<!ENTITY toolbar.clear "Clear">
+<!ENTITY toolbar.process "Processlog">
+
+<!ENTITY msgboxMenu.copy  "Copy to clipboard">
+<!ENTITY msgboxMenu.save  "Save as ..">
+
+<!ENTITY sessionMenu.current "Remove session">
+<!ENTITY sessionMenu.clear   "Clear all sessions">
+
+<!ENTITY processing          "Processing... Stand by">
+<!ENTITY switchmode          "Switch to live view">

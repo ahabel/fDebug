@@ -1,0 +1,94 @@
+
+ cmsbrowser {
+ 	-moz-binding: url('chrome://fcms-core/content/xbl/cmsbrowser.xbl#cmsbrowser');
+ }
+ 
+ ftoolbar {
+   -moz-binding: url('chrome://global/content/bindings/toolbar.xml#toolbar');
+   margin: 5px;
+   border: 1px solid ThreeDShadow;
+   -moz-border-radius: 3px;
+   padding: 2px 5px;  
+ }
+ 
+ ftoolbar > .groupbox-body {
+ 	padding:0px;
+ }
+ 
+ loaderdeck {
+   -moz-binding: url('chrome://fcms-core/content/xbl/loaderdeck.xbl#loaderdeck');
+ }
+
+ .topbox {
+ 	border-bottom:0px;
+ 	border-left:0px;
+ 	border-right:0px;
+ }
+
+ .caption {
+ 	font-size:15px;
+ 	font-weight:bold;
+  color:#15877e;
+ 	/*font-style:italic;*/
+ }
+
+ .smallcaption {
+ 	font-size:13px;
+ 	font-weight:bold;
+ 	/*font-style:italic;*/
+ }
+
+.smallestcaption {
+ 	font-size:11px;
+ 	font-weight:bold;
+ 	/*font-style:italic;*/
+ }
+ 
+ .text_grau {
+   color:#858585;
+ }
+ 
+ button#go {
+   list-style-image: url("chrome://fcms-core/content/gfx/login.png");
+   -moz-image-region: rect(0px 26px 26px 0px) !important;
+   width:80px;
+ }
+ 
+ button#go[disabled="true"] {
+   -moz-image-region: rect(0px 52px 26px 26px) !important;
+ }
+ 
+ button#manage_profile {
+   list-style-image: url("chrome://fcms-core/content/gfx/profile.png");
+   -moz-image-region: rect(0px 20px 20px 0px) !important;
+ }
+ 
+ button#manage_profile[disabled="true"] {
+   -moz-image-region: rect(0px 40px 20px 20px) !important;
+ }
+ 
+  button#logout {
+   list-style-image: url("chrome://fcms-core/content/gfx/logout.png");
+   -moz-image-region: rect(0px 26px 26px 0px) !important;
+ }
+ 
+ button#logout[disabled="true"] {
+   -moz-image-region: rect(0px 52px 26px 26px) !important;
+ }
+ 
+ button#fcms_administration {
+   list-style-image: url("chrome://fcms-core/content/gfx/admin/control.png");
+   -moz-image-region: rect(0px 24px 24px 0px) !important;
+ }
+ 
+ button#logout[disabled="true"] {
+   -moz-image-region: rect(0px 48px 24px 24px) !important;
+ }
+ 
+ 
+ 
+treechildren::-moz-tree-cell-text(imageitem) {margin-left:2px;}
+
+treechildren::-moz-tree-image(categorie-folder) {list-style-image: url(chrome://fcms-core/content/gfx/tango/folder.png);}
+treechildren::-moz-tree-cell-text(categorie-folder) {margin-left:2px;}
+ 

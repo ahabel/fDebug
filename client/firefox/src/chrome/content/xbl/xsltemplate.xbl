@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<bindings xmlns="http://www.mozilla.org/xbl">
+<!--
+   /**
+    * fDebug Client Extension
+    * 
+    * Shared code from fCMS  - xsltemplate bindung  
+    * 
+    * @author Arne Blankerts <theseer@fcms.de>
+    * @copyright 2005 - 2009 fCMS Development Team
+    * @license http://fcms.de/en/site/license.xml freepoint public license
+    * @version SVN: $Revision$
+    * 
+    */
+    -->
+   
+   <binding id="xsltemplate">
+      
+      <content/>
+      
+      <implementation>
+         <field name="_result">null</field>
+         <field name="_xml">null</field>
+         <field name="_xsl">null</field>
+         <field name="_xslProc">null</field>
+         
+         <!-- ################################################################################################ -->
+                  
+         <property name="xml" onget="return this._xml;">
+            <setter>
+               <![CDATA[
+					 if (val!='') {
+                  
+					 	var parser = new DOMParser();
+						this._xml  = parser.parseFromString(val,'text/xml');
+				   	if (this._xml.documentElement.namespaceURI=="http://www.mozilla.org/newlayout/xml/parsererror.xml" &&
+            		    this._xml.documentElement.localName=='parseerror') {
+				   		throw this._xml.documentElement.textContent;
+	               }
+                  
+                } else {
+                  this._xml=null;
+                }
+              ]]>
+            </setter>
+         </property>
+         
+         <!-- ################################################################################################ -->
+         
+         <property name="xsl" onget="return this._xsl;">
+            <setter>
+               <![CDATA[
+					 if (val!='') {
+                  
+					 	var parser = new DOMParser();
+						this._xsl  = parser.parseFromString(val,'text/xml');
+				   	if (this._xsl.documentElement.namespaceURI=="http://www.mozilla.org/newlayout/xml/parsererror.xml" &&
+            		    this._xsl.documentElement.localName=='parseerror') {
+				   		throw this._xsl.documentElement.textContent;
+	               }
+						this._xslProc.importStylesheet(this._xsl);                  
+                  
+                } else {
+                  this._xsl=null;
+                }
+              ]]>
+            </setter>
+         </property>
+         
+         <!-- ################################################################################################ -->
+         
+         <constructor>
+            <![CDATA[
+               this._xsl=null;
+               this._xml=null;
+               
+               this._xslProc=new XSLTProcessor;
+               if (this.firstChild) {
+						this._xslProc.importStylesheet(this.firstChild);
+		            this._xsl=this.removeChild(this.firstChild);               
+               } else if (this.hasAttribute('template')) {                                           
+               	this.xsl=this._loadFile(this.getAttribute('template'));
+               }
+               
+					if (this.hasAttribute('source')) {
+               	this.xml=this._loadFile(this.getAttribute('source'));
+               }              
+               
+               if (this._xml && this._xsl) {
+               	this.transform();
+               } 
+
+				]]>
+         </constructor>
+         
+         <!-- ################################################################################################ -->
+         
+         <method name="_loadFile">
+            <parameter name="fname" />
+            <body>
+               <![CDATA[
+                  
+                  var serv = Components.classes["@mozilla.org/network/io-service;1"].getService(Components.interfaces.nsIIOService);    
+    					var chan = serv.newChannel(fname, null, null);
+                  
+    					//chan.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
+					   var instream = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
+				      instream.init (chan.open());
+
+					   var result = "";
+					   var avail;
+
+						while ((avail = instream.available()) > 0)
+					        result += instream.read(avail);
+
+					    return result;
+               ]]>
+            </body>
+         </method>
+         
+         <!-- ################################################################################################ -->
+         
+         <method name="setParameter">
+		      <parameter name="NS"/>
+		      <parameter name="Name"/>
+		      <parameter name="Value"/>
+            <body><![CDATA[            
+	            this._xslProc.setParameter(NS,Name,Value);
+            ]]></body>
+         </method>
+         
+         <!-- ################################################################################################ -->
+         
+         <method name="clearParameter">
+            <body><![CDATA[            
+            	this._xslProc.clearParameters();
+            ]]></body>
+         </method>
+         
+         <!-- ################################################################################################ -->
+         
+         <method name="clear">
+            <body>
+               <![CDATA[
+                  if (this._result) {
+	                  this.parentNode.removeChild(this._result);
+                  }
+                  ]]>
+            </body>
+         </method>
+         
+         <!-- ################################################################################################ -->
+         
+         <method name="setPersistence">
+            <parameter name="obj"/>
+            <body>
+               <![CDATA[
+                  var idList =new Array();
+                  var objList=new Array();
+                  
+                  // get childnode id's
+                  var children=obj.getElementsByTagName('*');
+                  for (var i in children) {
+                     if (children[i] && children[i].id && children[i].id != '' ) {
+                        idList.push(children[i].id);
+                        objList[children[i].id]=children[i];
+                     }
+                  }
+                
+                  var rdfService = Components.classes["@mozilla.org/rdf/rdf-service;1"].getService(Components.interfaces.nsIRDFService);    
+               		var ds  = rdfService.GetDataSource('rdf:local-store');
+               		
+                  var res = rdfService.GetResource(document.location.href);   
+                  var predicate = rdfService.GetResource('http://home.netscape.com/NC-rdf#persist');
+               
+                  var ts = ds.GetTargets(res, predicate, true);   
+                  while (ts.hasMoreElements()) {
+                     var target = ts.getNext();
+                  
+                  		if (target instanceof Components.interfaces.nsIRDFResource) {
+                  		   
+                  		   if (idList.indexOf(target.Value)!=-1) {
+                  	        	var ps= ds.ArcLabelsOut(target);
+               	     	     	while (ps.hasMoreElements()) {
+               
+               	               var persist = ps.getNext();
+                  
+                  			      	if (persist instanceof Components.interfaces.nsIRDFResource) {
+            	   		            var ts2 = ds.GetTargets(target, persist, true);
+               
+                  	            		while (ts2.hasMoreElements()) {
+               	     	            		var target2 = ts2.getNext();
+                        						
+                  		    				if (target2 instanceof Components.interfaces.nsIRDFLiteral) {
+                  		    				   dump(target.Value+'.'+persist.Value+'='+target2.Value+'\n');
+                  		    				   objList[target.Value][persist.Value]=target2.Value;
+                  		    				   objList[target.Value].setAttribute(persist.Value,target2.Value);
+            					         }
+               				         }
+                              }
+              				   }      		       
+                  		   }         
+                     }
+                  }
+               ]]>
+            </body>
+         </method>
+         
+         <!-- ################################################################################################ -->
+         
+         <method name="transform">
+            <parameter name="xmlObj"/>
+            <body>
+               <![CDATA[
+                  
+					 if (xmlObj) { 
+                  this._xml=xmlObj;
+                } else {
+                  xmlObj=this._xml; 
+                } 
+						
+					 if (this._result) {
+						this.parentNode.removeChild(this._result);
+                  this._result=null;							
+					 }
+                  						
+					 var tmp=this._xslProc.transformToFragment(xmlObj, document);																		
+                  
+					 if (tmp.hasChildNodes()) {	    
+					    if (this.hasAttribute('persistence')) {
+   					       this.setPersistence(tmp.firstChild);
+					    }
+ 						this._result=this.parentNode.insertBefore(tmp.firstChild, this);
+					 } else {
+                  this._result=null;
+                }
+						
+            ]]>
+            </body>
+         </method>
+         
+      </implementation>
+   </binding>
+</bindings>

@@ -1,0 +1,39 @@
+
+ richlistitem.entrymessage {
+	background-color:#fff;
+ }
+
+ richlistitem[selected="true"] label {
+	color:#fff;
+ }
+
+
+ .entrymessage {
+   font-weight:bold;
+	color:#000;
+ }
+ 
+ .entrywarning {
+   font-weight:bold;
+ 	color:#ec7e1f;
+ }
+ 
+ .entryerror {
+   font-weight:bold;
+ 	color:#ff0000;
+ }
+ 
+ richlistitem.entryfatal {
+	background-color:#ff0000;
+ }
+ 
+.entryfatal {
+   font-weight:bold;
+ 	color:#ffffff;
+ }
+ 
+ richlistitem.entrytimer {
+   color:#000;
+   background-color:#cccccc;
+ }
+ 

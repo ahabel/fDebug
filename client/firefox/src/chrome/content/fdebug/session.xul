@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/common/fcms.css" text="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/xbl/xsltemplate.css" text="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/fdebug/session.css" text="text/css"?>
+<!DOCTYPE window [
+ <!ENTITY % localeDTD SYSTEM "chrome://fdebug/locale/session.dtd">
+ %localeDTD;
+ ]>  
+<window title="" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        onload="fDebugSession.init();"        
+        onunload="fDebugSession.notifyClose();">
+
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js" />
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/session.js"/>
+
+   <broadcasterset>
+      <broadcaster id="clearBCAST" disabled="true" />
+   </broadcasterset>
+
+   <popupset>
+      <popup id="processMenu">
+         <menuitem label="&msgboxMenu.copy;" oncommand="fDebugSession.copyText();" />
+         <menuseparator />
+         <menuitem label="&msgboxMenu.save;" oncommand="fDebugSession.saveToFile();" />
+      </popup>
+      
+      <popup id="sessionMenu">
+         <menuitem label="&msgboxMenu.copy;" oncommand="fDebugSession.copyPath();" />
+         <menuseparator />
+         <menuitem label="&sessionMenu.current;" observes="clearBCAST" oncommand="fDebugSession.removeCurrent();" />
+         <menuitem label="&sessionMenu.clear;" observes="clearBCAST" oncommand="fDebugSession.clearPanel();" />         
+      </popup>
+   </popupset>
+
+
+   <hbox flex="1">
+      <listbox id="poolList" style="min-width:150px" context="sessionMenu"
+                onselect="fDebugSession.switchPanel(this.value);">
+         <listhead>
+            <listheader label="Sessions"/>
+         </listhead>
+         
+      </listbox>
+      
+ 	  <splitter collapse="none">
+	    <grippy/>
+	  </splitter>            
+            
+      <vbox flex="1">
+         <groupbox orient="horizontal">
+            <toolbarbutton type="radio" group="displayGroup" id="processButton" label="&toolbar.process;" 
+                           image="chrome://fdebug/content/gfx//processlog.gif"
+                           oncommand="fDebugSession.displayProcess();" checked="true" />
+            <toolbarseparator/>
+            <toolbarbutton type="radio" group="displayGroup" id="variablesButton" label="Variables" disabled="true"
+                           image="chrome://fdebug/content/gfx//variables.png"
+                           oncommand="fDebugSession.displayVariables();" />
+            <toolbarseparator/>
+            <toolbarbutton type="radio" group="displayGroup" id="sourceButton" label="Source" disabled="true"
+                           image="chrome://fdebug/content/gfx//source.gif"
+                           oncommand="fDebugSession.displaySource();" />
+            <toolbarseparator/>
+            <toolbarspacer flex="1" />
+            <toolbarseparator/>
+            <toolbarbutton oncommand="fDebugSession.clearPanel();" label="&toolbar.clear;"
+                           observes="clearBCAST" style="padding-left:5px; padding-right:5px;"
+                           image="chrome://fdebug/content/gfx//clear.png"/>
+         </groupbox>
+         
+         <deck id="displayDeck" flex="1">
+            
+            <vbox flex="1">
+               <groupbox id="searchGroup" collapsed="true" orient="horizontal">
+                  <textbox type="timed" timeout="500" id="processFilter" oncommand="fDebugSession.filterList()">
+                     <hbox align="center" pack="center" style="margin-right:4px;">
+                        <image src="chrome://fdebug/content/gfx/search_16x16.png" />   
+                     </hbox>                     
+                  </textbox>
+                  <button label="Apply" oncommand="fDebugSession.filterList();" />
+                  <button label="Reset" oncommand="document.getElementById('processFilter').value='';fDebugSession.filterList();" />                  
+               </groupbox>
+               <deck id="processingDeck" flex="1" />
+               <groupbox id="detailGroup" collapsed="true">
+                  <hbox flex="1">
+                      <label id="detailText1" value="" flex="1" />                      
+                      <label id="detailText2" style="text-align:right;" value="" />                      
+                  </hbox>
+                   <label id="detailText3" style="text-align:right;" value="" />                      
+               </groupbox>   
+            </vbox>
+	         
+            
+            <vbox flex="1">
+               <xsltemplate id="variables" template="chrome://fdebug/content/fdebug/variables.xsl" />
+            </vbox>
+            <vbox flex="1">
+               <iframe id="source" src="chrome://fdebug/content/fdebug/sourceview.xul" flex="1" />
+            </vbox>
+            
+            <vbox flex="1" pack="start" align="center">
+               
+               <spacer flex="0" style="height:50px;" />
+               <label value="&processing;" style="font-size:14px;" disabled="true" />
+               <spacer flex="0" style="height:10px;" />
+               <progressmeter mode="undetermined" style="width:150px;" />               
+               <spacer flex="0" style="height:10px;" />
+               <button label="&switchmode;" oncommand="fDebugSession.isLive=true; fDebugSession.toggleLive(fDebugSession.currentPool)" />
+               
+            </vbox>
+            
+            <hbox flex="1" pack="start" align="center">               
+               <label flex="1" value="Panel data no longer available" style="font-size:14px; text-align:center;" disabled="true" />
+            </hbox>
+            
+         </deck>
+         
+      </vbox>
+      
+   </hbox>
+
+</window>

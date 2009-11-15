@@ -1,0 +1,52 @@
+<?xml version="1.0"?> 
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<window id="fDEBUG::History" title="fDebug Messagelog" windowtype="fcms::static"		 
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   style="background-image: url(chrome://fdebug/content/gfx/backgroundlogo.png); background-repeat:no-repeat; background-position:center; "
+   onload="parent.fDebug.history=document.getElementById('historyLog');">
+   
+   <label disabled="true" style="padding:15px; font-size:20px; font-weight:bold;" value="Messagelog"/>
+   <script type="application/x-javascript"><![CDATA[
+   
+      function clearHistory() {
+         
+         var msgbox=document.getElementById('historyLog');
+         var listcols=msgbox.childNodes[0].cloneNode(true);
+         var listhead=msgbox.childNodes[1].cloneNode(true);
+        
+         var tmp=msgbox.cloneNode(false);
+         tmp.setAttribute('id','historyLog');
+         tmp.appendChild(listcols);
+         tmp.appendChild(listhead);        
+         msgbox.parentNode.replaceChild(tmp,msgbox);
+         parent.fDebug.history=tmp;
+      }
+   
+   ]]></script>   
+   <vbox>
+      <listbox id="historyLog">
+
+         <listhead>
+            <listheader style="width:150px;" label="Time"/>
+            <listheader style="width:110px;" label="Address"/>
+            <listheader label="Message"/>
+         </listhead>
+
+         <listcols>
+            <listcol/>
+            <listcol/>
+            <listcol flex="1"/>
+         </listcols>
+      </listbox>
+      <hbox>
+         <spacer flex="1" />
+	      <groupbox align="right">
+	         <toolbarbutton label="clear" oncommand="clearHistory();"        
+               image="chrome://fdebug/content/gfx/clear.png"/>
+
+	      </groupbox>            
+      </hbox>
+  
+   </vbox>
+   
+</window>

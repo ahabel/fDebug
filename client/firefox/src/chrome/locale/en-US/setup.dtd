@@ -1,0 +1,32 @@
+<!ENTITY setup.window "fDebug Client Configuration">
+<!ENTITY setup.general "General settings">
+<!ENTITY setup.service "Service settings">
+<!ENTITY setup.server "fDebug Hosts">
+<!ENTITY setup.context "Context colors">
+
+<!ENTITY setup.connection  "Silently drop unkown hosts">    
+<!ENTITY setup.autostart.label "Enable autostart on open">
+<!ENTITY setup.details.label  "Auto show details">    
+<!ENTITY setup.context.label "Show context colors">
+<!ENTITY setup.context.learn "Ignore unknown context">
+<!ENTITY setup.multi.label "Allow concurrent connections">
+<!ENTITY setup.tabs.label "Use individual tabs per host">
+
+<!ENTITY setup.expire.enable "Autoexpire after">
+<!ENTITY setup.expire.label  "sessions">
+<!ENTITY setup.expire.remove  "Remove expired sessions">
+
+<!ENTITY setup.listen.label "Listen on Port:">
+<!ENTITY setup.listen.default "(Default: 5005)">
+
+<!ENTITY setup.history.label "Limit history:">
+<!ENTITY setup.history.default "(Default: 15 calls)">
+
+<!ENTITY button.allow "Allow">
+<!ENTITY button.block "Block">
+<!ENTITY button.remove "Remove">
+<!ENTITY button.update "Update">
+
+<!ENTITY head.address "IP-Addresses">
+
+<!ENTITY setup.proxy.label "Enable proxy support">

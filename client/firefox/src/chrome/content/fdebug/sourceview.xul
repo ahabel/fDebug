@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/xbl/xsltemplate.css" type="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/fdebug/XMLPrettyPrint.css" type="text/css" ?>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      onload="init();"
+      title="fCMS v5.0 :: fDebug :: Sourceview " id="fcmsv5::fdebug::source">
+   
+   <script type="text/javascript"><![CDATA[
+     
+      function init() {   
+        document.addEventListener("click", onClickHandler, false);
+		}
+   
+		function onClickHandler(event) {
+        try {
+          var par = event.originalTarget;
+          if (par.nodeName == 'div' && par.className == 'expander') {
+            if (par.parentNode.className == 'expander-closed') {
+              par.parentNode.className = 'expander-open';
+              event.originalTarget.firstChild.data = '\u2212';
+            }
+            else {
+              par.parentNode.className = 'expander-closed';
+              event.originalTarget.firstChild.data = '+';
+            }
+          }
+        } catch (e) {
+          dump('fDebug source view oups: '+e+'\n');
+        }
+   	}   	   
+   
+      ]]></script>
+   
+   <vbox flex="1" style="border:1px solid black; background-color:#fff; overflow:auto; padding:5px;">
+	   <xsltemplate id="source" template="chrome://fdebug/content/fdebug/sourceview.xsl" />   
+   </vbox>
+
+</window>

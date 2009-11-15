@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<overlay id="fcmsv5CoreOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="text/javascript" src="chrome://fdebug/content/overlay.js" />
+
+	<!-- seamonkey tools menu -->
+	<menupopup id="taskPopup">	
+   	<menuitem label="fDebug" id="fDebug" accesskey="D" insertbefore="navBeginGlobalItems" oncommand="fDebugOpen();" />
+	</menupopup>
+	
+	<!-- firefox tools menu -->
+	<menupopup id="menu_ToolsPopup">
+		<menuitem label="fDebug" id="fDebug" accesskey="D" insertafter="devToolsSeparator" oncommand="fDebugOpen();" />	
+	</menupopup> 
+
+</overlay>

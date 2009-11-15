@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://fdebug/content/common/fcms.css" text="text/css"?>
+<!DOCTYPE window [
+    <!ENTITY % localeDTD SYSTEM "chrome://fdebug/locale/fdebug/setup.dtd">
+    %localeDTD;
+]>  
+<window title="&setup.window;" windowtype="fcms::static"
+   xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+   onload="fDebugSetup.init();">
+   
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js"/>
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fpreference.js"/>
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/setup.js"/>
+   
+   <grid flex="1">
+      
+      <columns>
+         <column flex="1" />
+         <column flex="1" />
+      </columns>
+      
+      <rows>
+         
+         <row flex="0">
+            <groupbox id="setup::general" class="topbox" flex="1" orient="horizontal">
+               <caption>
+                  <label class="smallcaption" value="&setup.general;"/>
+               </caption>
+         
+               <vbox>
+                  <checkbox label="&setup.autostart.label;" value="1" id="conf:autostart" oncommand="fDebugSetup.onChange();" />
+                  <checkbox label="&setup.tabs.label;" value="1" id="conf:tabs" oncommand="fDebugSetup.onChange();" />
+                  <checkbox label="&setup.details.label;" value="1" id="conf:details" oncommand="fDebugSetup.onChange();" />
+                  <checkbox label="&setup.context.label;" value="1" id="conf:context:show" oncommand="fDebugSetup.onChange();" />
+                  <checkbox label="&setup.context.learn;" value="1" id="conf:context:learn" oncommand="fDebugSetup.onChange();" />
+                  <hbox align="center">
+                     <checkbox label="&setup.expire.enable;" value="1" id="conf:expire:enable" oncommand="fDebugSetup.onChange();" />
+                     <textbox id="conf:expire:limit" style="width:60px;" type="number" min="2" onchange="fDebugSetup.onChange();" />
+                     <label value="&setup.expire.label;"/>   
+                  </hbox>
+                  <checkbox label="&setup.expire.remove;" style="margin-left:30px;" value="1" id="conf:expire:remove" oncommand="fDebugSetup.onChange();" />
+               </vbox>
+               <spacer flex="1" />
+            </groupbox>
+         
+            <vbox>
+               <groupbox id="setup::connection" class="topbox" flex="1" orient="horizontal">
+                  <caption>
+                     <label class="smallcaption" value="&setup.service;" />
+                  </caption>
+               
+                  <vbox>
+                     <checkbox label="&setup.multi.label;" value="1" id="conf:multi" oncommand="fDebugSetup.onChange();" />
+                     <checkbox label="&setup.connection;" value="1" id="conf:silent" oncommand="fDebugSetup.onChange();" />
+
+                     <hbox align="center" style="margin-left:5px;">
+                        <label value="&setup.listen.label;"/>
+                        <textbox id="conf:port" style="width:70px;" type="number" min="1" max="65535" onchange="fDebugSetup.onChange();" />                              
+                        <label value="&setup.listen.default;"/>
+                     </hbox>
+                  </vbox>
+                  <spacer flex="1" />
+            
+               </groupbox>
+            
+               <groupbox id="setup::proxy" class="topbox" flex="1">
+                  <caption>
+                     <checkbox class="smallcaption" label="&setup.proxy.label;" value="1" 
+                               id="conf:proxy:enable" oncommand="fDebugSetup.onChange();" />
+                  </caption>
+                  
+                  <hbox style="margin-left:5px;" align="center">
+                     <label style="margin-left:5px;" value="Host:" />       
+                     <textbox id="conf:proxy:host" style="width:250px;" oninput="fDebugSetup.onChange();" />                              
+                     <label value="Port:" />       
+                     <textbox id="conf:proxy:port" style="width:70px;" type="number" min="1" max="65535" onchange="fDebugSetup.onChange();" />
+                  </hbox>                              
+               </groupbox>
+            </vbox>
+         </row>
+         
+         <row flex="1">
+            
+            <groupbox flex="0" class="topbox" orient="horizontal">
+               <caption>
+                  <label class="smallcaption" value="&setup.server;"/>
+               </caption>
+               
+               <listbox style="min-width:150px" id="conf:iplist" onselect="fDebugSetup.selectHost();">
+                  <listhead>
+                     <listheader label="&head.address;"/>               
+                  </listhead>                                    
+               </listbox>
+         
+               <vbox flex="0">
+                  <textbox id="currentIP" oninput="fDebugSetup.verifyHost(this);" />
+                  <hbox>
+                     <spacer flex="1"/>
+                     <button label="&button.allow;" disabled="true" id="but:accept" oncommand="fDebugSetup.acceptHost();" />
+                     <button label="&button.block;" disabled="true" id="but:refuse" oncommand="fDebugSetup.refuseHost();" />
+                  </hbox>
+                  <spacer flex="1"/>
+                  <button label="&button.remove;" disabled="true" id="but:remove" oncommand="fDebugSetup.removeHost();"/>
+               </vbox>
+         
+            </groupbox>
+      
+            <groupbox class="topbox" orient="horizontal" style="width:350px;">
+               <caption>
+                  <label class="smallcaption" value="&setup.context;"/>
+               </caption>
+         
+               <richlistbox style="min-width:250px" id="conf:contextList" onselect="fDebugSetup.selectContext();" />
+               
+               <vbox flex="0">
+                  <textbox id="currentContext" oninput="fDebugSetup.verifyContext();" />
+                  <hbox>
+                     <spacer flex="1"/>
+                     <button label="&button.update;" disabled="true" id="but:ctxupdate" oncommand="fDebugSetup.updateContext();" />
+                  </hbox>
+                  <spacer flex="1"/>
+                  <button label="&button.remove;" disabled="true" id="but:ctxremove" oncommand="fDebugSetup.removeContext();"/>
+               </vbox>
+         
+            </groupbox>
+            
+         </row>
+         
+      </rows>
+      
+   </grid>
+      
+   <groupbox flex="0" orient="horizontal">
+      <spacer flex="1" />
+      <toolbarseparator />
+      <toolbarbutton label="revert" style="padding-left:5px; padding-right:5px;" image="chrome://fdebug/content/gfx/undo.png"
+         oncommand="fDebugSetup.revertAll();" id="but:revert" disabled="true" />
+      <toolbarseparator />
+      <toolbarbutton label="Save" style="padding-left:5px; padding-right:5px;" image="chrome://fdebug/content/gfx/save.png"
+         oncommand="fDebugSetup.saveSettings();" id="but:save" disabled="true" />
+   </groupbox>
+      
+</window>

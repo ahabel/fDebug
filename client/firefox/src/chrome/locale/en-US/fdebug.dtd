@@ -1,0 +1,32 @@
+<!ENTITY toolbar.clear "Clear">
+<!ENTITY toolbar.setup "Setup">
+<!ENTITY toolbar.save  "Save">
+<!ENTITY toolbar.compat  "Compat Mode">
+<!ENTITY toolbar.compat.exit  "Exit Compat Mode">
+
+<!ENTITY msgboxMenu.clear "Clear">
+<!ENTITY msgboxMenu.copy  "Copy to clipboard">
+<!ENTITY msgboxMenu.save  "Save as ..">
+
+<!ENTITY setup.server.label "Server Connection:">
+<!ENTITY setup.iplist.label "Accept connections from:">
+<!ENTITY setup.listen.label "Listen on Port:">
+<!ENTITY setup.listen.default "(Default: 5005)">
+<!ENTITY setup.autostart.label "Autostart on open:">
+
+<!ENTITY yes "yes">
+<!ENTITY no  "no">
+<!ENTITY cancel "Cancel">
+<!ENTITY ok     "Ok">
+
+<!ENTITY message.display  "Message display">
+
+<!ENTITY option.show.message     "Show Messages">
+<!ENTITY option.show.warning     "Show Warnings">
+<!ENTITY option.show.error       "Show Errors">
+<!ENTITY option.show.fatal       "Show Fatal Errors">
+
+<!ENTITY option.proxy.enable     "Proxy enabled">
+
+<!ENTITY option.popup            "Bring to top on Error">
+<!ENTITY option.live             "Enable live view">

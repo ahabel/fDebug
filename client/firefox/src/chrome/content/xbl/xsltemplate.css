@@ -1,0 +1,5 @@
+
+ xsltemplate {
+   display:none;
+ 	-moz-binding: url('chrome://fdebug/content/xbl/xsltemplate.xbl#xsltemplate'); 	
+ }

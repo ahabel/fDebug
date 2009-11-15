@@ -1,0 +1,5 @@
+<!ENTITY  brandShortName        "fDebug">
+<!ENTITY  brandFullName         "fDebug XUL Remote Debugg Client">            
+<!ENTITY  vendorShortName       "fCMS Development Team">
+
+<!ENTITY  releaseURL            "http://fdebug.de">

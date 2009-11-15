@@ -1,0 +1,29 @@
+
+.cmstab {
+  -moz-binding: url("chrome://fdebug/content/xbl/cmsbrowser.xbl#cmsbrowser-tab"); 
+  border: none;
+  margin: 0px; 
+  padding:0px;  
+  list-style-image: url("chrome://fdebug/content/gfx/close.png");
+  -moz-image-region: rect(0px 16px 16px 0) !important;
+}
+
+.cmstab > toolbarbutton > image {
+  margin:-3px;
+}
+
+.cmstab > toolbarbutton > image:hover {
+ -moz-image-region: rect(0px 32px 16px 16px) !important;
+ border: none;
+}
+
+.cmstab > toolbarbutton > image:active {
+ -moz-image-region: rect(0px 48px 16px 32px) !important;
+ border: none;
+}
+
+.cmstab > toolbarbutton[disabled="true"] {
+  padding: 3px 2px !important;
+ -moz-image-region: rect(0px 64px 16px 48px) !important;
+ border: none;
+}
