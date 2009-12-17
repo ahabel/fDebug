@@ -1,5 +1,8 @@
 #!/bin/sh
 
+BASE=`pwd`
+echo "Using base path: $BASE"
+
 VERSION="0.1-alpha"
 BUILDPATH="fcms-fdebug-$VERSION"
 BUILDTARGET="$BUILDPATH.src.tar.gz"
@@ -11,13 +14,15 @@ if [ ! -f $LICENSE ]; then
   exit 1;
 fi;
 
-cd /webspace/fdebugclient/build
-if [ -d $BUILDPATH ]; then
+cd $BASE
+if [ ! -d $BUILDPATH ]; then
   mkdir $BUILDPATH;
 fi;
 
-cp -r ../src/ $BUILDPATH;
-cp -r ../include/ $BUILDPATH;
+mkdir $BUILDPATH/include
+mkdir $BUILDPATH/src
+cp -r ../include/* $BUILDPATH/include/
+cp -r ../src/*     $BUILDPATH/src/
 
 find ./$BUILDPATH/ -type d|grep ".svn" |xargs rm -rf
 
@@ -28,7 +33,7 @@ echo "Copying License -> $BUILDPATH/LICENSE";
 cp $LICENSE $BUILDPATH/LICENSE
 
 echo "Building package $BUILDTARGET";
-if [ -f "/tmp/bla" ]; then
+if [ -f "$BUILDTARGET" ]; then
   rm -f $BUILDTARGET;
 fi;
 tar -czf $BUILDTARGET $BUILDPATH;
