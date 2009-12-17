@@ -29,8 +29,11 @@ find ./$BUILDPATH/ -type d|grep ".svn" |xargs rm -rf
 cp makefile $BUILDPATH;
 mkdir $BUILDPATH/objects;
 
-echo "Copying License -> $BUILDPATH/LICENSE";
+echo "Copy License -> $BUILDPATH/LICENSE"
 cp $LICENSE $BUILDPATH/LICENSE
+
+echo "Copy CHANGELOG -> $BUILDPATH/CHANGELOG"
+cp ../docs/CHANGELOG $BUILDPATH/CHANGELOG
 
 echo "Building package $BUILDTARGET";
 if [ -f "$BUILDTARGET" ]; then
