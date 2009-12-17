@@ -1,52 +1,48 @@
-################################################################################
-# Automatically-generated file. Do not edit!
-################################################################################
-
 RM := rm -rf
 
 CPP_SRCS += \
-../src/fdebug.cpp \
-../src/fdebugcli.cpp \
-../src/fdebugclient.cpp \
-../src/fdebugconfig.cpp \
-../src/fdebugexception.cpp \
-../src/fdebugmessage.cpp \
-../src/fdebugsocket.cpp 
+./src/fdebug.cpp \
+./src/fdebugcli.cpp \
+./src/fdebugclient.cpp \
+./src/fdebugconfig.cpp \
+./src/fdebugexception.cpp \
+./src/fdebugmessage.cpp \
+./src/fdebugsocket.cpp 
 
 C_SRCS += \
-../src/cJSON.c 
+./src/cJSON.c 
 
 OBJS += \
-./src/cJSON.o \
-./src/fdebug.o \
-./src/fdebugcli.o \
-./src/fdebugclient.o \
-./src/fdebugconfig.o \
-./src/fdebugexception.o \
-./src/fdebugmessage.o \
-./src/fdebugsocket.o 
+./objects/cJSON.o \
+./objects/fdebug.o \
+./objects/fdebugcli.o \
+./objects/fdebugclient.o \
+./objects/fdebugconfig.o \
+./objects/fdebugexception.o \
+./objects/fdebugmessage.o \
+./objects/fdebugsocket.o 
 
 C_DEPS += \
-./src/cJSON.d 
+./objects/cJSON.d 
 
 CPP_DEPS += \
-./src/fdebug.d \
-./src/fdebugcli.d \
-./src/fdebugclient.d \
-./src/fdebugconfig.d \
-./src/fdebugexception.d \
-./src/fdebugmessage.d \
-./src/fdebugsocket.d 
+./objects/fdebug.d \
+./objects/fdebugcli.d \
+./objects/fdebugclient.d \
+./objects/fdebugconfig.d \
+./objects/fdebugexception.d \
+./objects/fdebugmessage.d \
+./objects/fdebugsocket.d 
 
 
-src/%.o: ../src/%.c
-	gcc -I"../include" -O3 -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+objects/%.o: ./src/%.c
+	gcc -I"./include" -O3 -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
 
-src/fdebug.o: ../src/fdebug.cpp
-	g++ -I"../include" -I/usr/include/libxml2 -O2 -g -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"src/fdebug.d" -o"$@" "$<"
+#src/fdebug.o: ../src/fdebug.cpp
+#	g++ -I"../include" -I/usr/include/libxml2 -O2 -g -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"src/fdebug.d" -o"$@" "$<"
 
-src/%.o: ../src/%.cpp
-	g++ -I"../include" -I/usr/include/libxml2 -O3 -g -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
+objects/%.o: ./src/%.cpp
+	g++ -I"./include" -I/usr/include/libxml2 -O3 -g -c -fmessage-length=0 -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o"$@" "$<"
 
 
 
@@ -80,6 +76,7 @@ fdebug: $(OBJS) $(USER_OBJS)
 clean:
 	-$(RM) $(OBJS)$(C++_DEPS)$(C_DEPS)$(CC_DEPS)$(CPP_DEPS)$(EXECUTABLES)$(CXX_DEPS)$(C_UPPER_DEPS) fdebug
 	-@echo ' '
+
 
 .PHONY: all clean dependents
 .SECONDARY:
