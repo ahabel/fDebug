@@ -5,7 +5,7 @@
 #include "fdebugmessage.h"
 #include "fdebugconfig.h"
 
-#include "libxml/tree.h"
+#include "libxml2/libxml/tree.h"
 
 class fDebugCli {
 public:

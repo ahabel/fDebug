@@ -102,7 +102,7 @@ bool fDebugClient::clientHasData() {
 	x = strtok(buf, "\r\n");
 	sprintf(this->buffer, x);
 	
-	//printf("Recv: bytes rx: %d -- buffer: %i -- size: %i -- [%s]\n\n", bytes, strlen(this->buffer), sizeof(this->buffer), buf);
+	printf("Recv: bytes rx: %d -- buffer: %i -- size: %i -- [%s]\n\n", bytes, strlen(this->buffer), sizeof(this->buffer), buf);
 	
 	// send OK to client
 	this->sendMessage("OK\n");
