@@ -355,11 +355,11 @@ var fDebug = {
                   session.server = request.payload.server;
                   if (!this.settings['tabs']) {
                      if (!this.defaultTab) {
-                        this.defaultTab = this.makeTab('chrome://fcms-core/content/fdebug2/session.xul');
+                        this.defaultTab = this.makeTab('chrome://fdebug/content/fdebug/session.xul');
                      }
                      this.tabPool[session.server] = this.defaultTab;
                   } else if (!this.tabPool[session.server]) {
-                     this.tabPool[session.server] = this.makeTab('chrome://fcms-core/content/fdebug2/session.xul');
+                     this.tabPool[session.server] = this.makeTab('chrome://fdebug/content/fdebug/session.xul');
                      this.cmsTabBox.selectedTab = this.tabPool[session.server];
                   }
                   session.tab = this.tabPool[session.server];
@@ -432,7 +432,7 @@ var fDebug = {
    },
 
    openSetup : function() {
-      this.cmsTabBox.selectedTab = this.cmsTabBox.addTab('chrome://fcms-core/content/fdebug2/setup.xul', 'Configuration', true);
+      this.cmsTabBox.selectedTab = this.cmsTabBox.addTab('chrome://fdebug/content/fdebug/setup.xul', 'Configuration', true);
    },
 
    initTab : function(event) {
@@ -504,28 +504,6 @@ var fDebug = {
 
       this.history.appendChild(item);
       this.history.ensureElementIsVisible(item);
-   },
-
-   compatMode : function() {
-      this.shutdown();
-      this.clearAll();
-      this.logMessage('', 'Starting compat mode');
-      document.getElementById('compatFrame').setAttribute('src', 'chrome://fcms-core/content/fdebug/fdebug.xul');
-      document.getElementById('coreBox').selectedIndex = 1;
-   },
-
-   normalMode : function() {
-
-      this.logMessage('', 'Returning to normal mode');
-      document.getElementById('compatFrame').contentWindow.stop();
-      document.getElementById('coreBox').selectedIndex = 0;
-
-      var me = this;
-      setTimeout(function() {
-               document.getElementById('compatFrame').src = 'about:blank';
-               if (me.settings['autostart'])
-                  me.startService();
-            }, 500);
    }
 
 };

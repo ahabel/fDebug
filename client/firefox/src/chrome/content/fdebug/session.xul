@@ -65,18 +65,14 @@
             <toolbarseparator/>
             <toolbarbutton oncommand="fDebugSession.clearPanel();" label="&toolbar.clear;"
                            observes="clearBCAST" style="padding-left:5px; padding-right:5px;"
-                           image="chrome://fdebug/content/gfx//clear.png"/>
+                           image="chrome://fdebug/content/gfx/clear.png"/>
          </groupbox>
          
          <deck id="displayDeck" flex="1">
             
             <vbox flex="1">
                <groupbox id="searchGroup" collapsed="true" orient="horizontal">
-                  <textbox type="timed" timeout="500" id="processFilter" oncommand="fDebugSession.filterList()">
-                     <hbox align="center" pack="center" style="margin-right:4px;">
-                        <image src="chrome://fdebug/content/gfx/search_16x16.png" />   
-                     </hbox>                     
-                  </textbox>
+                  <textbox type="timed" timeout="500" id="processFilter" oncommand="fDebugSession.filterList()" />
                   <button label="Apply" oncommand="fDebugSession.filterList();" />
                   <button label="Reset" oncommand="document.getElementById('processFilter').value='';fDebugSession.filterList();" />                  
                </groupbox>

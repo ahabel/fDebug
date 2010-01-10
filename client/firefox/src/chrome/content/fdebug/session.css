@@ -3,10 +3,13 @@
 	background-color:#fff;
  }
 
- richlistitem[selected="true"] label {
-	color:#fff;
+ richlistitem[selected="true"] {
+   background-color:-moz-CellHighlight;
  }
 
+ richlistitem[selected="true"] label {
+   color:-moz-CellHighlightText;
+ }
 
  .entrymessage {
    font-weight:bold;
@@ -35,5 +38,12 @@
  richlistitem.entrytimer {
    color:#000;
    background-color:#cccccc;
+ }
+
+ richlistitem.entrytimer[selected="true"] {
+   background-color:-moz-CellHighlight;
+ }
+ richlistitem.entrytimer[selected="true"] label {
+   color:-moz-CellHighlightText;
  }
  

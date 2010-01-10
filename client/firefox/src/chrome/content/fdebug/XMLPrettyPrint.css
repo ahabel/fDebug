@@ -36,7 +36,7 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-@import url("chrome://fdebug/content/viewsource.css");
+@import url("chrome://fdebug/content/fdebug/viewsource.css");
 
 #header {
   background-color: #ccc;

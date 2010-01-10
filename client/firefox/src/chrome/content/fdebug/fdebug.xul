@@ -3,7 +3,7 @@
 <?xml-stylesheet href="chrome://fdebug/content/common/fcms.css" text="text/css"?>
 <?xml-stylesheet href="chrome://fdebug/content/xbl/xsltemplate.css" text="text/css"?>
 <!DOCTYPE window [
-    <!ENTITY % localeDTD SYSTEM "chrome://fdebug/locale/debug.dtd" >
+    <!ENTITY % localeDTD SYSTEM "chrome://fdebug/locale/fdebug.dtd" >
     %localeDTD;
 ]>  
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"

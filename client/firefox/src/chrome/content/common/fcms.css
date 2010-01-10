@@ -1,6 +1,6 @@
 
  cmsbrowser {
- 	-moz-binding: url('chrome://fcms-core/content/xbl/cmsbrowser.xbl#cmsbrowser');
+ 	-moz-binding: url('chrome://fdebug/content/xbl/cmsbrowser.xbl#cmsbrowser');
  }
  
  ftoolbar {
@@ -16,8 +16,18 @@
  }
  
  loaderdeck {
-   -moz-binding: url('chrome://fcms-core/content/xbl/loaderdeck.xbl#loaderdeck');
+   -moz-binding: url('chrome://fdebug/content/xbl/loaderdeck.xbl#loaderdeck');
  }
+ 
+ .configButton {
+   list-style-image: url("chrome://fdebug/content/gfx/maintoolbar.png");
+ 	-moz-image-region: rect(312px 24px 336px 0px) !important;
+ }
+ 
+ .configButton[disabled="true"] {
+   -moz-image-region: rect(312px 48px 336px 24px) !important;
+ } 
+
 
  .topbox {
  	border-bottom:0px;
@@ -49,7 +59,7 @@
  }
  
  button#go {
-   list-style-image: url("chrome://fcms-core/content/gfx/login.png");
+   list-style-image: url("chrome://fdebug/content/gfx/login.png");
    -moz-image-region: rect(0px 26px 26px 0px) !important;
    width:80px;
  }
@@ -59,7 +69,7 @@
  }
  
  button#manage_profile {
-   list-style-image: url("chrome://fcms-core/content/gfx/profile.png");
+   list-style-image: url("chrome://fdebug/content/gfx/profile.png");
    -moz-image-region: rect(0px 20px 20px 0px) !important;
  }
  
@@ -68,7 +78,7 @@
  }
  
   button#logout {
-   list-style-image: url("chrome://fcms-core/content/gfx/logout.png");
+   list-style-image: url("chrome://fdebug/content/gfx/logout.png");
    -moz-image-region: rect(0px 26px 26px 0px) !important;
  }
  
@@ -77,7 +87,7 @@
  }
  
  button#fcms_administration {
-   list-style-image: url("chrome://fcms-core/content/gfx/admin/control.png");
+   list-style-image: url("chrome://fdebug/content/gfx/admin/control.png");
    -moz-image-region: rect(0px 24px 24px 0px) !important;
  }
  
@@ -85,10 +95,19 @@
    -moz-image-region: rect(0px 48px 24px 24px) !important;
  }
  
- 
- 
 treechildren::-moz-tree-cell-text(imageitem) {margin-left:2px;}
 
-treechildren::-moz-tree-image(categorie-folder) {list-style-image: url(chrome://fcms-core/content/gfx/tango/folder.png);}
+treechildren::-moz-tree-image(categorie-folder) {list-style-image: url(chrome://fdebug/content/gfx/tango/folder.png);}
 treechildren::-moz-tree-cell-text(categorie-folder) {margin-left:2px;}
+
+#configDisplay {
+   list-style-image: url("chrome://fdebug/content/gfx/config.png");
+  -moz-image-region: rect(0px 16px 16px 0px) !important;
+  padding-right: 25px;
+}
+
+#configDisplay[disabled="true"] {
+	-moz-image-region: rect(0px 32px 16px 16px) !important;
+	padding-right: 25px;
+ } 
  
