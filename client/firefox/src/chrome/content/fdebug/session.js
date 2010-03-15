@@ -33,7 +33,7 @@ var fDebugSession = {
          document.title = this.server;
       }
       if (!this.poolMap[pool]) {
-         dump('Need to build new panel:' + pool + '\n');
+         // dump('Need to build new panel:' + pool + '\n');
 
          var panel = this.buildPanel();
          var pList = document.getElementById('poolList');
@@ -53,10 +53,10 @@ var fDebugSession = {
 
          if (fDebug.settings['expireenable']) {
             var c = pList.getRowCount();
-            dump('Pool count:' + c + '\n');
+            // dump('Pool count:' + c + '\n');
             if (c > fDebug.settings['expirelimit']) {
                var toClear = pList.getItemAtIndex(c - fDebug.settings['expirelimit'] - 1).value;
-               dump('Pool limit reached - removing pool:' + toClear + '\n');
+               // dump('Pool limit reached - removing pool:' + toClear + '\n');
                var x = this.poolMap[toClear].panel;
                x.parentNode.removeChild(x);
                if (fDebug.settings['expireremove']) {
@@ -280,7 +280,7 @@ var fDebugSession = {
          item.setAttribute('flevel', data['level']);
          item.setAttribute('fclass', data['class']);
          item.setAttribute('fmethod', data['method']);
-         item.setAttribute('fcall', data['type'])
+         item.setAttribute('fcall', data['type']);
          item.setAttribute('ffile', data['file']);
          item.setAttribute('fline', data['line']);
          item.setAttribute('fversion', data['version']);
@@ -358,7 +358,7 @@ var fDebugSession = {
 
       } catch (e) {
          fDebug.logMessage(this.server, 'Warning: Exception on handling payload:' + e);
-         dump('addMessage: Exception ' + e);
+         // dump('addMessage: Exception ' + e);
       }
 
    },
@@ -369,7 +369,16 @@ var fDebugSession = {
    },
 
    addVariables: function(pool, request) {
-      this.poolMap[pool].variables = request.payload['xml'];
+      var parser = new DOMParser();
+      //dump('AddVariables: ' + request.payload['xml'] + '\n');
+      
+      if (!this.poolMap[pool].variables) {
+         this.poolMap[pool].variables = parser.parseFromString('<?xml version="1.0" ?><container />', 'text/xml');
+      }
+
+      var vars = parser.parseFromString(request.payload['xml'],'text/xml');
+      this.poolMap[pool].variables.documentElement.appendChild(vars.documentElement);
+      
       if (pool == this.currentPool) {
          document.getElementById('variablesButton').disabled = false;
       }
@@ -377,8 +386,7 @@ var fDebugSession = {
 
    displayVariables: function() {
       var obj = document.getElementById('variables');
-      obj.xml = this.poolMap[this.currentPool].variables;
-      obj.transform();
+      obj.update(this.poolMap[this.currentPool].variables);
       document.getElementById('displayDeck').selectedIndex = 1;
       document.getElementById('variablesButton').checked = true;
    },
@@ -393,7 +401,7 @@ var fDebugSession = {
    displaySource: function() {
       var obj = document.getElementById('source').contentDocument.getElementById('source');
       obj.xml = this.poolMap[this.currentPool].source;
-      obj.transform();
+      obj.update();
       document.getElementById('displayDeck').selectedIndex = 2;
       document.getElementById('sourceButton').checked = true;
    },
@@ -490,7 +498,7 @@ var fDebugSession = {
       if (parent.document.getElementById('conf:popup').getAttribute('checked') != 'true') {
          return;
       }
-      dump('setting to front!\n');
+      // dump('setting to front!\n');
       parent.focus();
       fDebug.cmsTabBox.selectedTab = fDebug.sessionPool[this.currentPool].tab;
    },
@@ -572,4 +580,4 @@ var fDebugSession = {
          trans.close();
       }
    }
-}
+};

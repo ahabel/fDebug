@@ -2,6 +2,36 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
    
+   <xsl:template match="vardump">
+      <xsl:choose>
+         <xsl:when test="count(//vardump) > 1">
+		      <treeitem container="true">
+		         <xsl:if test="position() = last()">
+		            <xsl:attribute name="open">true</xsl:attribute>
+		         </xsl:if>
+		         <treerow properties="vardump">
+		            <treecell label="Variable Dump {position()}" properties="vardump" />
+		            <xsl:choose>
+		               <xsl:when test="@class">
+		                  <treecell label="{@class}{@type}{@method} (line {@line}, file {@file})" properties="vardump" />
+		               </xsl:when>
+		               <xsl:otherwise>
+		                  <treecell label="" properties="vardump" /> 
+		               </xsl:otherwise>
+		            </xsl:choose>
+                  
+		         </treerow>
+		         <treechildren>
+		            <xsl:apply-templates />
+		         </treechildren>
+		      </treeitem>      
+         </xsl:when>
+         <xsl:otherwise>
+            <xsl:apply-templates />
+         </xsl:otherwise>
+      </xsl:choose>
+   </xsl:template>
+   
    <xsl:template match="vargroup">
       
       <treeitem container="true">
@@ -40,10 +70,9 @@
       
    </xsl:template>
    
-   <xsl:template match="/">
-      
+   <xsl:template match="/">      
       <xsl:choose>
-         <xsl:when test="count(/vardump)=0">
+         <xsl:when test="count(//vardump)=0">
             <vbox flex="1" align="center">
                <spacer flex="1"/>
                <label value="No variable information available" disabled="true"/>
@@ -51,7 +80,6 @@
             </vbox>
          </xsl:when>
          <xsl:otherwise>
-            
             <tree flex="1">
                <treecols>
                   <treecol id="varname" label="Variable" primary="true" flex="3" persist="width"/>
@@ -60,10 +88,9 @@
                </treecols>
                
                <treechildren>
-                  <xsl:apply-templates select="/vardump/vargroup"/>
+                   <xsl:apply-templates select="//vardump"/>
                </treechildren>
             </tree>
-            
          </xsl:otherwise>
       </xsl:choose>
    </xsl:template>

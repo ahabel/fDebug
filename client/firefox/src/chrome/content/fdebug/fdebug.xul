@@ -7,7 +7,7 @@
     %localeDTD;
 ]>  
 <window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
-   xmlns:html="http://www.w3.org/1999/xhtml" title="fDebug 2.0.0" id="fdebug2::main"
+   xmlns:html="http://www.w3.org/1999/xhtml" title="fDebug 2.1.0-dev" id="fdebug2::main"
    persist="screenX screenY width height sizemode" onload="fDebug.init();" onclose="fDebug.shutdown();">
    
    <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js"/>

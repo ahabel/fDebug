@@ -9,7 +9,7 @@ if [ -z "$VERSION" ]; then
     VERSION=$latest
 fi
 rm -f fdebug.xpi install.rdf chrome/fdebug.jar 2>&1 >/dev/null
-sed "s/%version/$VERSION/" install.rdf.tpl > install.rdf
+sed "s/%version/$VERSION/" install.rdf.tmpl > install.rdf
 
 cd ../src/chrome
 zip -r ../../build/chrome/fdebug.jar content locale

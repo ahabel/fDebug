@@ -47,3 +47,7 @@
    color:-moz-CellHighlightText;
  }
  
+treechildren::-moz-tree-row(vardump) {
+  background-color: lightgreen;  
+}
+ 

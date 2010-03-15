@@ -403,7 +403,6 @@
        * @return void
        */
       public function registerVariable(&$var,$key='') {
-
          if ($key) {
             $this->variables[$key] = &$var;
          } else {
@@ -415,13 +414,15 @@
       /**
        * Send Variable dump to remote
        *
-       * @param array $dumpAdd Additional variables
+       * @param array   $dump    (Additional) variables to add to dump
+       * @param boolean $sendAll Include or exclude environmnet (GET, POST, ...) in dump
        *
        * @return void
        */
-      public function sendVariables(Array $dumpAdd = array()) {
-         $this->varsSent = true;
-
+      public function sendVariables(Array $dump = array(), $sendAll = true) {
+         if ($sendAll) {
+      	  $this->varsSent = true;
+         }
          if (!$this->socket) { return; }
 
          $xml = new XMLWriter();
@@ -430,26 +431,64 @@
          $xml->startDocument('1.0', 'UTF-8');
          $xml->startElement('vardump');
 
-         $this->flattenArray($xml, $_GET, 'GET');
-         $this->flattenArray($xml, $_POST, 'POST');
-         foreach($this->variables as $key => $value) {
-            $this->flattenArray($xml, $value, $key);
+         foreach($this->getGenericPayload(1) as $key => $value) {
+         	$xml->writeAttribute($key, $value);
          }
-         $this->flattenArray($xml, $dumpAdd, 'OTHER');
 
-         if (isset($_SESSION)) {
-            $this->flattenArray($xml, $_SESSION, 'SESSION');
+         if (count($dump)) {
+            $this->flattenArray($xml, $dump, 'OTHER');
          }
-         if (isset($_FILES)) {
-            $this->flattenArray($xml, $_FILES, 'FILES');
+
+         if ($sendAll) {
+         	if (isset($_GET)) {
+	            $this->flattenArray($xml, $_GET, 'GET');
+         	}
+         	if (isset($_POST)) {
+   	         $this->flattenArray($xml, $_POST, 'POST');
+         	}
+	         foreach($this->variables as $key => $value) {
+	            $this->flattenArray($xml, $value, $key);
+	         }
+	         if (isset($_SESSION)) {
+	            $this->flattenArray($xml, $_SESSION, 'SESSION');
+	         }
+	         if (isset($_FILES)) {
+	            $this->flattenArray($xml, $_FILES, 'FILES');
+	         }
+	         if (isset($_COOKIE)) {
+	            $this->flattenArray($xml, $_COOKIE, 'COOKIE');
+	         }
+	         $this->flattenArray($xml, $_SERVER, 'SERVER');
          }
-         $this->flattenArray($xml, $_COOKIE, 'COOKIE');
-         $this->flattenArray($xml, $_SERVER, 'SERVER');
 
          $xml->endElement();
          $xml->endDocument();
 
          $this->writeSocket('VARIABLES', array('xml' => $xml->outputMemory(true)));
+      }
+
+      /**
+       * Send source to client
+       *
+       * @param string $xml (optional) Overwrite previously set source
+       *
+       * @return void
+       */
+      public function sendSource($xml=null) {
+         $this->sourceSent = true;
+
+         if (!$this->isConnected()) { return; }
+
+         if (is_null($xml)) {
+            $xml = $this->source;
+         }
+
+         if (empty($xml)) {
+            $this->sendWarning('Source is empty - cannot send');
+            return;
+         }
+
+         $this->writeSocket('SOURCE', array('xml' => $xml));
 
       }
 
@@ -611,6 +650,36 @@
          $this->handleMessage($msg, fdebug::FATAL, $context);
       }
 
+
+      /**
+       * Internal helper to get a generic Payload from a stacktrace
+       *
+       * @param $offset  Offset from the stacktrace to start on (usually 2 for outside, 1 for calls from inside fDebug)
+       *
+       * @return Array
+       */
+      protected function getGenericPayload($offset = 2) {
+         $trace = array_slice(debug_backtrace(), $offset, 2);
+
+         if ((isset($trace[1]['class']) && defined($trace[1]['class'].'::version')!='')) {
+            $version = constant($trace[1]['class'].'::version');
+         } else {
+            $version = 'N/A';
+         }
+
+         $payload = array(
+            'line'    => isset($trace[0]['line']) ? $trace[0]['line'] : 'N/A',
+            'class'   => isset($trace[1]['class']) ? $trace[1]['class'] : '',
+            'method'  => isset($trace[1]['function']) ? $trace[1]['function'] : 'main',
+            'type'    => isset($trace[1]['type']) ? $trace[1]['type'] : '',
+            'file'    => isset($trace[0]['file']) ? basename($trace[0]['file']) : 'N/A',
+            'version' => $version
+         );
+
+         return $payload;
+
+      }
+
       /**
        * produce Message object and sent it over socket / write to file
        *
@@ -623,27 +692,10 @@
       protected function handleMessage($msg, $level, $context = null) {
          if (!$this->hasSession()) return;
 
-         //debug_print_backtrace();
-
-         $trace = array_slice(debug_backtrace(), 1, 2);
-
-         if ((isset($trace[1]['class']) && defined($trace[1]['class'].'::version')!='')) {
-            $version = constant($trace[1]['class'].'::version');
-         } else {
-            $version = 'N/A';
-         }
-
-         $payload = array(
-            'context' => is_null($context) ? $this->context : $context,
-            'level'   => $level,
-            'message' => (string)$msg,
-            'line'    => $trace[0]['line'],
-            'class'   => isset($trace[1]['class']) ? $trace[1]['class'] : '',
-            'method'  => isset($trace[1]['function']) ? $trace[1]['function'] : 'main',
-            'type'    => isset($trace[1]['type']) ? $trace[1]['type'] : '',
-            'file'    => basename($trace[0]['file']),
-            'version' => $version
-         );
+         $payload = $this->getGenericPayload();
+         $payload['context'] = is_null($context) ? $this->context : $context;
+         $payload['level']   = $level;
+         $payload['message'] = (string)$msg;
 
          if ($this->autoContext && is_null($context)) {
             $payload['context'] = $payload['class'];
@@ -651,31 +703,6 @@
 
          $this->writeSocket('MESSAGE', $payload);
          $this->writeFile($payload);
-
-      }
-
-      /**
-       * Send source to client
-       *
-       * @param string $xml (optional) Overwrite previously set source
-       *
-       * @return void
-       */
-      public function sendSource($xml=null) {
-         $this->sourceSent = true;
-
-         if (!$this->isConnected()) { return; }
-
-         if (is_null($xml)) {
-            $xml = $this->source;
-         }
-
-         if (empty($xml)) {
-            $this->sendWarning('Source is empty - cannot send');
-            return;
-         }
-
-         $this->writeSocket('SOURCE', array('xml' => $xml));
 
       }
 

@@ -192,7 +192,7 @@
                	     	            		var target2 = ts2.getNext();
                         						
                   		    				if (target2 instanceof Components.interfaces.nsIRDFLiteral) {
-                  		    				   dump(target.Value+'.'+persist.Value+'='+target2.Value+'\n');
+                  		    				   // dump(target.Value+'.'+persist.Value+'='+target2.Value+'\n');
                   		    				   objList[target.Value][persist.Value]=target2.Value;
                   		    				   objList[target.Value].setAttribute(persist.Value,target2.Value);
             					         }
@@ -209,22 +209,28 @@
          <!-- ################################################################################################ -->
          
          <method name="transform">
+            <parameter name="xmlObj" />
+            <body>
+               <![CDATA[
+                if (!xmlObj) { 
+                  xmlObj = this._xml;
+                } 
+                return this._xslProc.transformToFragment(xmlObj, document);                                                     
+            ]]>
+            </body>
+         </method>
+         
+         <method name="update">
             <parameter name="xmlObj"/>
             <body>
                <![CDATA[
-                  
-					 if (xmlObj) { 
-                  this._xml=xmlObj;
-                } else {
-                  xmlObj=this._xml; 
-                } 
 						
 					 if (this._result) {
 						this.parentNode.removeChild(this._result);
                   this._result=null;							
 					 }
-                  						
-					 var tmp=this._xslProc.transformToFragment(xmlObj, document);																		
+
+                var tmp=this.transform(xmlObj);                  						
                   
 					 if (tmp.hasChildNodes()) {	    
 					    if (this.hasAttribute('persistence')) {
