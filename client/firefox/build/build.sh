@@ -11,6 +11,8 @@ fi
 rm -f fdebug.xpi install.rdf chrome/fdebug.jar 2>&1 >/dev/null
 sed "s/%version/$VERSION/" install.rdf.tmpl > install.rdf
 
+mkdir chrome 2>&1 >/dev/null
+
 cd ../src/chrome
 zip -r ../../build/chrome/fdebug.jar content locale
 
