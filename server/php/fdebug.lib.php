@@ -535,7 +535,7 @@
             } else {
                $xml->startElement('var');
                $xml->writeAttribute('key', $key);
-               $xml->text($value);
+               $xml->text((string)$value);
                $xml->endElement();
             }
          }
