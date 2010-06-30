@@ -22,7 +22,7 @@ var fDebug = {
    poolCount : 0,
    sessionPool : [],
    tabPool : [],
-
+   
    observerBound : false,
    httpObserver : null,
 
@@ -50,7 +50,7 @@ var fDebug = {
       // dump('loadSettings\n');
 
       this.settings['contextlist'] = fPreference.getValue('fdebug.context.list', 'fCore').split(' ');
-      dump('ContextList: ' + this.settings['contextlist'].length + ' -> '+ this.settings['contextlist'][0]);
+      //dump('ContextList: ' + this.settings['contextlist'].length + ' -> '+ this.settings['contextlist'][0]);
       this.settings['color'] = {};
       if (this.settings['contextlist'].length > 0) {
          for (var x = 0; x < this.settings['contextlist'].length; x++) {
@@ -121,9 +121,6 @@ var fDebug = {
             // blacklist check
             if (fDebug.settings['blacklist'].indexOf(transport.host) != -1) {
                fDebug.logMessage(transport.host, 'Host blacklisted');
-               // dump('BLACKLIST HIT: '+transport.host+'\n');
-               // addItem('Control','Connection from Host "'+transport.host+'"
-               // not allowed - disconnect');
                transport.close(0);
                return;
             }
@@ -176,7 +173,8 @@ var fDebug = {
                server : '',
                url : '',
                tab : '',
-               msgStack : []
+               msgStack : [],
+               replyBuffer: null
             };
 
             fDebug.logMessage(transport.host, 'Host connected');
@@ -213,10 +211,18 @@ var fDebug = {
                      if (this.buffer.indexOf('\n') != -1) {
                         var tmp = this.buffer.split('\n');
                         this.buffer = tmp[1];
-                        outstream.write('OK\n', 3);
-                        if (!fDebug.processData(this.pool, tmp[0])) {
+                        var result = fDebug.processData(this.pool, tmp[0]);
+                        if (!result) {
                            fDebug.logMessage(transport.host, 'Error processing payload.');
                            fCore.debug('Processing fDebug data failed:' + tmp[0]);
+                           outstream.write('ERROR\n',6);
+                           return;
+                        }
+                        if (fDebug.sessionPool[this.pool] && fDebug.sessionPool[this.pool].replyBuffer) {                                                      
+                           outstream.write(fDebug.sessionPool[this.pool].replyBuffer+'\n', fDebug.sessionPool[this.pool].replyBuffer.length+1);
+                           fDebug.sessionPool[this.pool].replyBuffer = null;
+                        } else {
+                           outstream.write('OK\n', 3);
                         }
                      }
                   }
@@ -367,6 +373,19 @@ var fDebug = {
                   this.logMessage(request.payload.server, 'HELO Phase passed');
                   break;
                }
+               
+               case 'CONFIRM': {
+                  this.logMessage(session.server, 'Processing confirm request');
+                  this.sessionPool[pool].replyBuffer = confirm(request.payload.msg) ? 'Y' : 'N';
+                  break;
+               }
+               
+               case 'PROMPT': {
+                  this.logMessage(session.server, 'Processing prompt request');
+                  this.sessionPool[pool].replyBuffer = prompt(request.payload.msg);
+                  break;
+               }
+               
                case 'QUIT' : {
                   this.logMessage(session.server, 'Closing connection');
                   dump('QUIT from Server ' + session.server + '\n');
