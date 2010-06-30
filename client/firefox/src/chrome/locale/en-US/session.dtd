@@ -9,3 +9,6 @@
 
 <!ENTITY processing          "Processing... Stand by">
 <!ENTITY switchmode          "Switch to live view">
+
+<!ENTITY variableMenu.copyValue  "Copy value to clipboard">
+<!ENTITY variableMenu.copyName   "Copy name to clipboard">

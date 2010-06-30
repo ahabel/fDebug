@@ -25,6 +25,11 @@
          <menuitem label="&msgboxMenu.save;" oncommand="fDebugSession.saveToFile();" />
       </popup>
       
+      <popup id="variableMenu">
+         <menuitem label="&variableMenu.copyValue;" oncommand="fDebugSession.copyVariable(1);" />
+         <menuitem label="&variableMenu.copyName;" oncommand="fDebugSession.copyVariable(0);" />
+      </popup>
+      
       <popup id="sessionMenu">
          <menuitem label="&msgboxMenu.copy;" oncommand="fDebugSession.copyPath();" />
          <menuseparator />

@@ -62,8 +62,8 @@
       
       <treeitem>
          <treerow>
-            <treecell label="{@key}"/>
-            <treecell label="&#187;{.}&#171;"/>
+            <treecell value="{@key}" label="{@key}"/>
+            <treecell value="{.}" label="&#187;{.}&#171;"/>
          </treerow>
          
       </treeitem>
@@ -80,7 +80,7 @@
             </vbox>
          </xsl:when>
          <xsl:otherwise>
-            <tree flex="1">
+            <tree flex="1" context="variableMenu" id="variableTree" seltype ="single">
                <treecols>
                   <treecol id="varname" label="Variable" primary="true" flex="3" persist="width"/>
                   <splitter class="tree-splitter"/>
