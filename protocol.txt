@@ -1,0 +1,311 @@
+   
+   fDebug Protocol Specification v2.1
+   Copyright (C) 2010 fCMS Development Team
+   ----------------------------------------------------------------------------------------------
+   
+   @author Arne Blankerts
+      
+   ----------------------------------------------------------------------------------------------
+
+   1. Introduction
+   2. Communucation
+   3. Control structures
+   4. Message structure
+   5. Variable structure
+   6. Source structure
+   7. Interaction structures
+   8. Sample communication
+   9. Proxy
+   
+   ----------------------------------------------------------------------------------------------
+   
+   1. Introduction
+   
+      This document describes the protocol used for fDebug 2.1. A client aiming to be compatible
+      with the fDebug 2.1 protocol has to support every structure but may choose not to implement
+      all functionality associated with it as long as the expected replies are given.
+      
+      A server side implementation may choose not to implement all features but to be considered
+      compliant with fDebug 2.1 has to support at least all control features (see section 3).
+      
+   2. Communication
+      
+      fDebug uses a simple and straight forward socket based communication protocol. Every request
+      send from the backend to the client has to be sent as a json encoded data string described
+      in section 3 to 7. A reply for every non interactive request has to be either 'OK' or
+      'ERROR' in case a processing error did occur. Interactive request have to return the value
+      as defined by section 7 of this document.
+      
+      While named client, technically the client may be considered a server for the fact it will
+      wait in listen mode for incoming requests on a tcp socket. The default port for this is 5005.
+      
+      A connection from the backend (server side implementation) has to introduce itself by
+      sending a HELO request, specifying the label for the session tab - usually the hostname - as
+      well as the label for the session entry - usually the url requested. The protocol does NOT
+      specify any security in terms of authentication or authorization. 
+      
+      The backend may send a PING request at any given time to ensure the connection is valid.     
+      Once a connection is established, variables and messages can be send in any order.       
+      When complete, a connection will get terminated by sending a QUIT control message.
+      
+      All requests share a common object structure:
+      
+         - type:  The Type of the request. Valid values are CONTROL, MESSAGE, VARIABLES, SOURCE,
+                  INTERACTIVE and - for proxies only - SETCLIENT
+                  
+         - payload: An object with payload data individually defined per type and request
+         
+      Every communication block has to end with a new line char, no matter if it's on the sending
+      or receiving end.
+      
+      An fDebug Server expects an acknowledgement of receipt after each request:
+      
+      'OK'     Request Confirmation
+               Even if there is no explicit check for a valid confirmation value
+               it's recommended to send 'OK' for confirmation.
+             
+      'ERROR'  Receipt failed or denied
+               Debug Clients may send this reply value in case of an error.
+               This reply causes the fDebug Server to close the connection/socket.
+         
+
+   3. Control structures
+   
+      The fDebug protocol currently requires the implementation and support for the following
+      control statements:
+      
+      3.1 HELO
+      
+      The HELO statement has to be used upon connection and will associate the following
+      statements with the specified session and server. It can only be send once per
+      connection.
+      
+      Request: 
+      { type: 'CONTROL', payload: { action: 'HELO', url: '...', server: '...' } }
+      
+      Reply:
+      OK | ERROR
+      
+      
+      3.2 PING
+      
+      A PING statement can be used at any time and is used to ensure the socket
+      connection is still available as well as the client alive
+
+      Request:      
+      { type: 'CONTROL', payload: { action: 'PING' } }
+      
+      Reply:
+      OK | ERROR
+      
+      
+      3.3 QUIT  
+      
+      The QUIT statement has to be used to cleanly end a session. The client has to
+      close down the connection after sending its reply. 
+      
+      Request:
+      { type: 'CONTROL', payload: { action: 'QUIT' } }
+     
+      Reply:
+      OK | ERROR
+
+
+   4. Message structures
+   
+      The core feature of fDebug is to provide a process log display. To achieve this, various
+      messages can be send from the backend to the client. The request-object has to be provide
+      the following properties:
+      
+         - message      The text to display
+         - level        The information level, can be MESSAGE, WARNING, ERROR or FATAL
+         - context      A context information
+         - file         Filename of the source file this message is send from
+         - line         The line within the source file
+         - class        Classname from where the message is send
+         - method       Method within the class this message send from
+         - type         Calltype (defaults to :: for static calls and -> for normal object calls)
+         - version      A version reference if available  
+   
+      Request:
+      { type: 'MESSAGE', payload: { 
+            message: '', level: '', context: '', 
+            file: '', line: '', class: '', method: '', type: '', version: '' } }
+      
+      Reply:      
+      OK | ERROR
+   
+   
+   5. Variable structure
+   
+      A variable dump can be send to the client, representing either a final state and the end of
+      the request or an intermediate version. As of fDebug 2.1 variables can be send multiple times
+      during a request.
+      
+      The variable dump has to be represented as an xml string, being constructed from the
+      following tags:
+      
+      <vardump>
+         The root element used to wrap a dump in.
+         Valid children: vargroup, var
+     
+      
+      <vargroup name="" type="" />
+         A group of variables, like an array or object
+         Valid children: vargroup, var
+      
+      <var key="">....</var>
+         An actual variable with the name specified by the key and the value as text value
+         Valid children: text
+   
+      The document as to be serialized to a string and passed on as the xml property of payload
+      
+      Request:
+      { type: 'VARIABLES', payload: { xml: '<?xml version="1.0" ?><vardump>....</vardump>' } }
+      
+      Reply:      
+      OK | ERROR
+         
+   
+   6. Source structures
+   
+      The Source view allows for a free form xml display. The request object is expected to
+      contain an xml property with the serialized xml string to be displayed as source.
+      
+      Request:
+      { type: 'SOURCE', payload: { xml: '...' } }
+         
+      Reply:      
+      OK | ERROR
+         
+   
+   7. Interaction structure
+   
+      As of fDebug 2.1 clients have to support the following interactive requests. If a client 
+      has no means of performing the interaction or is configured not to do so, the default
+      value as to be returned immediately.
+
+      7.1 WAIT
+
+      A wait request can be used to stop the processing for a given amount of seconds or until the
+      wait is ended by the user (for example by closing a wait notify) - whatever happens first. 
+      If the client is configured not to perform interactions or incapable of doing so, the wait
+      request has to return immediately.
+   
+      Request:   
+      { type: 'INTERACTIVE', payload: { action: 'wait', message: '...', timeout: '' } }   
+
+      Reply:
+      OK | ERROR
+      
+
+      7.2 CONFIRM
+
+      Confirmations allow for a logical switch during debug. It should be used with high caution,
+      since it modifies the execution path. If the client is not allowed to or incapable of
+      performing a confirmation, the default value has to be returned immediately.
+
+      Request:
+      { type: 'INTERACTIVE', payload: { action: 'confirm', message: '...', default: 'Y|N' } }   
+      
+      Reply:
+      Y | N
+      
+      
+      7.3 PROMPT
+
+      Prompts allow a debugging user to adjust or inject a value given by the server backend. If the
+      client is not allowed to or incapable of  performing a prompt, the default value has to
+      be returned immediately.
+
+      Request:
+      { type: 'INTERACTIVE', payload: { action: 'prompt', message: '...', default: '' } }   
+
+      Reply:
+      <user supplied/adjusted value | default >      
+
+
+      7.4 PASSWORD
+
+      The password interaction is identical to the prompt with the only difference of having the
+      input not being visible at any time. Be aware: It still gets transmitted unencoded.
+
+      Request:         
+      { type: 'INTERACTIVE', payload: { action: 'password', message: '...', default: '' } }   
+
+      Reply:
+      <user supplied password | default>
+      
+
+      7.5 SELECT
+
+      Select interactions allow the debugging user to choose from a given list of options before
+      debugging continues. It should be used with high caution, since it probably modifies the
+      execution path. If the client is not allowed to or incapable of performing a select,
+      the default value has to be returned immediately.
+
+      Choice options are passed as an array of objects, each containing a label property for display
+      and a value property which will get returned in case this item has been selected.
+
+      Request:   
+      { type: 'INTERACTIVE', payload: { 
+            action: 'select', message: '...', options: [ { label: '', value: '' }], default: '' } 
+      }   
+   
+      Reply:
+      <selected value | default>
+
+
+   8. Sample Communication
+
+      A typical session may look something like this: 
+      
+         [connection open]
+         -->  { type: 'CONTROL', payload: { action: 'HELO', url: '/', server: 'localhost' } }\n
+         <--  OK\n
+       
+         -->  { type: 'CONTROL', payload: { action: 'PING' } }\n
+         <--  OK\n
+      
+         -->  { type: 'MESSAGE', payload: { message: 'Process started', level: 'INFO', .... } }\n
+         <--  OK\n
+      
+         -->  { type: 'CONTROL', payload: { action: 'QUIT' } }\n
+         <--  OK\n
+         [connection close]
+         
+
+   9. Proxy
+
+      Quite often a direct connection from the server end back to the client is not possible due
+      to firewalls or network address translation. To workaround that limitation, fDebug supports
+      the use of proxies. Each client has to register with the proxy and supply its UUID to
+      have it identified by the proxy for later requests and the tcp port it awaits connections.
+
+      A server backend can connect to the same proxy and by specifying the UUID of the client
+      it wants to talk to, have the proxy forward all i/o to and from that client.
+
+      For registration and handling purposes, proxies need to support these request types:
+
+      9.1 REGISTER
+
+         This request is used by the client only.
+
+         Request:
+         { type: 'REGISTER', payload: { UUID: '...', PORT: '....' } }
+
+         Reply:
+         OK | ERROR
+
+
+      9.2 SETCLIENT
+
+         This request is used by the server backend only
+
+         Request:
+         { type: 'SETCLIENT', payload: { UUID: '...' } }
+
+         Reply:
+         OK | ERROR
+                  
+
