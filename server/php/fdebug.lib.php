@@ -264,6 +264,20 @@
          $this->writeSocket('CONTROL', array('action' => 'PING'));
       }
 
+      public function confirm($msg) {
+         return $this->writeSocket('CONTROL', array(
+               'action' => 'CONFIRM',
+               'msg'    => $msg
+         )) == 'Y' ? true : false;
+      }
+
+      public function prompt($msg) {
+         return $this->writeSocket('CONTROL', array(
+               'action' => 'PROMPT',
+               'msg'    => $msg
+         ));
+      }
+
       /**
        * open debug logfile
        *
@@ -318,7 +332,7 @@
        * @param string $type    Message type to be send
        * @param array  $payload Payload data depending on type
        *
-       * @return void
+       * @return void or string if a value was provided from the client
        */
       protected function writeSocket($type, Array $payload) {
          if (!$this->isConnected()) {
@@ -341,12 +355,23 @@
             return;
          }
 
-         $reply = @fgets($this->socket, 6);
+         $reply = @fgets($this->socket);
+         $reply = trim($reply);
+         switch ($reply) {
+            case 'OK': {
+               return;
+            }
 
-         if (trim($reply)=='ERROR' || $reply===false) {
-            $this->closeSocket();
+            case '':
+            case 'ERROR': {
+               $this->closeSocket();
+               return;
+            }
+
+            default: {
+               return $reply;
+            }
          }
-
       }
 
       /**
