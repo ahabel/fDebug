@@ -32,6 +32,7 @@
                   <checkbox label="&setup.autostart.label;" value="1" id="conf:autostart" oncommand="fDebugSetup.onChange();" />
                   <checkbox label="&setup.tabs.label;" value="1" id="conf:tabs" oncommand="fDebugSetup.onChange();" />
                   <checkbox label="&setup.details.label;" value="1" id="conf:details" oncommand="fDebugSetup.onChange();" />
+                  <checkbox label="&setup.interaction.label;" value="1" id="conf:interaction" oncommand="fDebugSetup.onChange();" />                      
                   <checkbox label="&setup.context.label;" value="1" id="conf:context:show" oncommand="fDebugSetup.onChange();" />
                   <checkbox label="&setup.context.learn;" value="1" id="conf:context:learn" oncommand="fDebugSetup.onChange();" />
                   <hbox align="center">
@@ -97,11 +98,11 @@
                   <textbox id="currentIP" oninput="fDebugSetup.verifyHost(this);" />
                   <hbox>
                      <spacer flex="1"/>
-                     <button label="&button.allow;" disabled="true" id="but:accept" oncommand="fDebugSetup.acceptHost();" />
-                     <button label="&button.block;" disabled="true" id="but:refuse" oncommand="fDebugSetup.refuseHost();" />
+                     <button image="chrome://fdebug/content/gfx/accept.png" label="&button.allow;" disabled="true" id="but:accept" oncommand="fDebugSetup.acceptHost();" />
+                     <button image="chrome://fdebug/content/gfx/refuse.png" label="&button.block;" disabled="true" id="but:refuse" oncommand="fDebugSetup.refuseHost();" />
                   </hbox>
                   <spacer flex="1"/>
-                  <button label="&button.remove;" disabled="true" id="but:remove" oncommand="fDebugSetup.removeHost();"/>
+                  <button image="chrome://fdebug/content/gfx/clear.png" label="&button.remove;" disabled="true" id="but:remove" oncommand="fDebugSetup.removeHost();"/>
                </vbox>
          
             </groupbox>
@@ -120,7 +121,7 @@
                      <button label="&button.update;" disabled="true" id="but:ctxupdate" oncommand="fDebugSetup.updateContext();" />
                   </hbox>
                   <spacer flex="1"/>
-                  <button label="&button.remove;" disabled="true" id="but:ctxremove" oncommand="fDebugSetup.removeContext();"/>
+                  <button image="chrome://fdebug/content/gfx/clear.png" label="&button.remove;" disabled="true" id="but:ctxremove" oncommand="fDebugSetup.removeContext();"/>
                </vbox>
          
             </groupbox>
@@ -134,10 +135,10 @@
    <groupbox flex="0" orient="horizontal">
       <spacer flex="1" />
       <toolbarseparator />
-      <toolbarbutton label="revert" style="padding-left:5px; padding-right:5px;" image="chrome://fdebug/content/gfx/undo.png"
+      <toolbarbutton label="&button.revert;" style="padding-left:5px; padding-right:5px;" image="chrome://fdebug/content/gfx/undo.png"
          oncommand="fDebugSetup.revertAll();" id="but:revert" disabled="true" />
       <toolbarseparator />
-      <toolbarbutton label="Save" style="padding-left:5px; padding-right:5px;" image="chrome://fdebug/content/gfx/save.png"
+      <toolbarbutton label="&button.save;" style="padding-left:5px; padding-right:5px;" image="chrome://fdebug/content/gfx/save.png"
          oncommand="fDebugSetup.saveSettings();" id="but:save" disabled="true" />
    </groupbox>
       

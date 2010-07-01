@@ -19,6 +19,8 @@ var fDebugSetup = {
       document.getElementById('conf:multi').checked = fDebug.settings['multi'];
       document.getElementById('conf:details').checked = fDebug.settings['details'];
       document.getElementById('conf:silent').checked = fDebug.settings['silent'];
+      document.getElementById('conf:interaction').checked = fDebug.settings['interaction'];
+      
       document.getElementById('conf:context:show').checked = fDebug.settings['contextshow'];
       document.getElementById('conf:context:learn').checked = fDebug.settings['contextlearn'];
 
@@ -194,7 +196,8 @@ var fDebugSetup = {
       fPreference.setValue('fdebug.multi', document.getElementById('conf:multi').checked, 'BOOL');
       fPreference.setValue('fdebug.silent', document.getElementById('conf:silent').checked, 'BOOL');
       fPreference.setValue('fdebug.details', document.getElementById('conf:details').checked, 'BOOL');
-
+      fPreference.setValue('fdebug.interaction', document.getElementById('conf:interaction').checked, 'BOOL');
+      
       fPreference.setValue('fdebug.expire.enable', document.getElementById('conf:expire:enable').checked, 'BOOL');
       fPreference.setValue('fdebug.expire.remove', document.getElementById('conf:expire:remove').checked, 'BOOL');
       fPreference.setValue('fdebug.expire.limit', document.getElementById('conf:expire:limit').value, 'STRING');
@@ -218,8 +221,8 @@ var fDebugSetup = {
 
       var contextList = document.getElementById('conf:contextList').getElementsByTagName('colorpicker');
       fDebug.settings['contextlist'] = [];
-      for ( var x = 0; x < contextList.length; x++) {
-         var o = contextList[x];
+      for ( x = 0; x < contextList.length; x++) {
+         o = contextList[x];
          fPreference.setValue('fdebug.color.' + o.getAttribute('name'), o.color, 'STRING');
          fDebug.settings['color'][o.getAttribute('name')] = o.color;
          fDebug.settings['contextlist'].push(o.getAttribute('name'));
@@ -246,6 +249,7 @@ var fDebugSetup = {
       fDebug.settings['tabs'] = fPreference.getValue("fdebug.tabs", true);
       fDebug.settings['multi'] = fPreference.getValue("fdebug.multi", true);
       fDebug.settings['details'] = fPreference.getValue("fdebug.details", false);
+      fDebug.settings['interaction'] = fPreference.getValue("fdebug.interaction", false);
 
       fDebug.settings['history'] = fPreference.getValue("fdebug.history", 15);
       fDebug.settings['whitelist'] = fPreference.getValue('fdebug.whitelist', '127.0.0.1').split(' ').sort();

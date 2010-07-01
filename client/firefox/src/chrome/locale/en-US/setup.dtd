@@ -6,7 +6,7 @@
 
 <!ENTITY setup.connection  "Silently drop unkown hosts">    
 <!ENTITY setup.autostart.label "Enable autostart on open">
-<!ENTITY setup.details.label  "Auto show details">    
+<!ENTITY setup.details.label  "Always show details">
 <!ENTITY setup.context.label "Show context colors">
 <!ENTITY setup.context.learn "Ignore unknown context">
 <!ENTITY setup.multi.label "Allow concurrent connections">
@@ -22,10 +22,16 @@
 <!ENTITY setup.history.label "Limit history:">
 <!ENTITY setup.history.default "(Default: 15 calls)">
 
+<!ENTITY setup.interaction.label  "Enable interaction support">    
+
 <!ENTITY button.allow "Allow">
 <!ENTITY button.block "Block">
 <!ENTITY button.remove "Remove">
 <!ENTITY button.update "Update">
+
+<!ENTITY button.revert "Revert">
+<!ENTITY button.save   "Save">
+
 
 <!ENTITY head.address "IP-Addresses">
 
