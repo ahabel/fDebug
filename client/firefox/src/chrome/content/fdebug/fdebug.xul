@@ -12,6 +12,8 @@
    
    <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js"/>
    <script type="application/x-javascript" src="chrome://fdebug/content/common/fpreference.js"/>   
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebugsettings.js"/>
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fsocketlistener.js"/>
    <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebug.js"/>
    
    <popupset>
@@ -62,8 +64,7 @@
                style="padding-left:5px; padding-right:5px;"
                image="chrome://fdebug/content/gfx/clear.png"/>
             <toolbarseparator/>
-            <toolbarbutton type="menu" image="chrome://fdebug/content/gfx/settings.png"
-               label="&message.display; ">
+            <toolbarbutton type="menu" image="chrome://fdebug/content/gfx/settings.png" label="&message.display; ">
                <menupopup>
                   <menuitem type="checkbox" checked="true" autocheck="true" id="conf:message" label="&option.show.message;"
                             oncommand="fPreference.setValue('fdebug.show.message',this.getAttribute('checked')=='true', 'BOOL');" />

@@ -4,9 +4,9 @@
  * fdebug main class
  * 
  * @author Arne Blankerts <theseer@fcms.de>
- * @copyright 2009 fCMS Development Team
+ * @copyright 2009-2010 fCMS Development Team
  * @license http://fcms.de/en/site/license.xml freepoint public license
- * @version SVN: $Revision$
+ * @version %version
  * 
  */
 var fDebug = {
@@ -14,7 +14,6 @@ var fDebug = {
    observerService : Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService),
    cmsTabBox : null,
 
-   settings : {},
    socket : null,
 
    inSession : 0,
@@ -34,222 +33,36 @@ var fDebug = {
 
       this.cmsTabBox = document.getElementById('main');
       this.cmsTabBox.setTabTitle('fDebug MessageLog');
-      this.loadSettings();
 
-      if (this.settings['autostart']) {
+      if (fDebugSettings.autostart) {
          window.setTimeout(function() {
             fDebug.startService();
          }, 500);
       }
+      
+      for(var key in fDebugSettings.show) {
+         document.getElementById('conf:'+key).checked = fDebugSettings.show[key];
+      }
+      document.getElementById('conf:popup').checked = fDebugSettings.popup;
 
    }, // init
 
-   loadSettings : function() {
-
-      this.settings['contextlist'] = fPreference.getValue('fdebug.context.list', 'fCore').split(' ');
-      this.settings['color'] = {};
-      if (this.settings['contextlist'].length > 0) {
-         for ( var x = 0; x < this.settings['contextlist'].length; x++) {
-            var t = this.settings['contextlist'][x];
-            this.settings['color'][t] = fPreference.getValue("fdebug.color." + t, '#ccc');
-         }
-      }
-
-      this.settings['uuid'] = fPreference.getValue('fdebug.uuid', '');
-      if (this.settings['uuid'] == '') {
-         var uuidGenerator = Components.classes["@mozilla.org/uuid-generator;1"]
-               .getService(Components.interfaces.nsIUUIDGenerator);
-         this.settings['uuid'] = uuidGenerator.generateUUID().toString();
-         fPreference.setValue('fdebug.uuid', this.settings['uuid'], 'STRING');
-      }
-
-      this.settings['contextshow']  = fPreference.getValue("fdebug.context.show", false);
-      this.settings['contextlearn'] = fPreference.getValue("fdebug.context.learn", false);
-
-      // general connection settings
-      this.settings['port']       = fPreference.getValue("fdebug.port", 5005);
-      this.settings['autostart']  = fPreference.getValue("fdebug.autostart", false);
-      this.settings['silent']     = fPreference.getValue("fdebug.silent", false);
-      this.settings['tabs']       = fPreference.getValue("fdebug.tabs", true);
-      this.settings['multi']      = fPreference.getValue("fdebug.multi", true);
-      this.settings['details']    = fPreference.getValue("fdebug.details", false);
-      this.settings['interaction']= fPreference.getValue("fdebug.interaction", false);
-      this.settings['history']    = fPreference.getValue("fdebug.history", 15);
-
-      this.settings['proxyenable'] = fPreference.getValue("fdebug.proxy.enable", false);
-      this.settings['proxyhost']   = fPreference.getValue("fdebug.proxy.host", '');
-      this.settings['proxyport']   = fPreference.getValue("fdebug.proxy.port", '5005');
-
-      this.settings['expireenable'] = fPreference.getValue("fdebug.expire.enable", false);
-      this.settings['expireremove'] = fPreference.getValue("fdebug.expire.remove", false);
-      this.settings['expirelimit']  = fPreference.getValue("fdebug.expire.limit", '50');
-
-      // whitelist & blacklist
-      this.settings['whitelist'] = fPreference.getValue('fdebug.whitelist', '127.0.0.1').split(' ').sort();
-      this.settings['blacklist'] = fPreference.getValue('fdebug.blacklist', '').split(' ').sort();
-
-      // Display settings
-      if (!fPreference.getValue('fdebug.show.message', true))
-         document.getElementById('conf:message').removeAttribute('checked');
-
-      if (!fPreference.getValue('fdebug.show.warning', true))
-         document.getElementById('conf:warning').removeAttribute('checked');
-
-      if (!fPreference.getValue('fdebug.show.error', true))
-         document.getElementById('conf:error').removeAttribute('checked');
-
-      if (!fPreference.getValue('fdebug.show.fatal', true))
-         document.getElementById('conf:fatal').removeAttribute('checked');
-
-      if (!fPreference.getValue('fdebug.display.popup', true))
-         document.getElementById('conf:popup').removeAttribute('checked');
-
-   },
-
    startService : function() {
       document.getElementById('conf:accept').checked = true;
-
-      var socketListener = {
-
-         onSocketAccepted : function(serv, transport) {
-
-            // blacklist check
-            if (fDebug.settings['blacklist'].indexOf(transport.host) != -1) {
-               fDebug.logMessage(transport.host, 'Host blacklisted');
-               transport.close(0);
-               return;
-            }
-
-            if (fDebug.settings['whitelist'].indexOf(transport.host) == -1) {
-               // host not yet allowed - handle
-               if (fDebug.settings['silent']) {
-                  fDebug.logMessage(transport.host, 'Host not allowed - dropping connection');
-                  transport.close(0);
-                  return;
-               }
-
-               var prompts = Components.classes["@mozilla.org/embedcomp/prompt-service;1"]
-                     .getService(Components.interfaces.nsIPromptService);
-
-               var check = {
-                  value : false
-               };
-
-               var result = prompts.confirmCheck(window, 'fDebug Connection request', "Accept connection from IP '"
-                     + transport.host + "' ?", 'Save decision in whitelist/blacklist', check);
-
-               if (check.value) { // save option marked
-                  var key = (result ? 'whitelist' : 'blacklist');
-                  fDebug.settings[key].push(transport.host);
-                  fPreference.setValue('fdebug.' + key, fDebug.settings[key].join(' '), 'STRING');
-               }
-
-               if (!result) { // request refused - leave
-                  transport.close(0);
-                  return;
-               }
-            }
-
-            // multiconnections?
-            if (fDebug.inSession > 0 && !fDebug.settings['multi']) {
-               fDebug.logMessage(transport.host, 'Too many connections - blocking');
-               // dump('InSession block!\n');
-               transport.close(0);
-               return;
-            }
-
-            fDebug.inSession++;
-            var pool = ++fDebug.poolCount;
-            fDebug.sessionPool[pool] = {
-               transport : transport,
-               server : '',
-               url : '',
-               tab : '',
-               msgStack : [],
-               replyBuffer : null
-            };
-
-            fDebug.logMessage(transport.host, 'Host connected');
-            // dump('CONNECTION: '+transport.host+'\n');
-
-            try {
-
-               var stream = transport.openInputStream(0, 0, 0);
-               var outstream = transport.openOutputStream(0, 0, 0);
-               var instream = Components.classes["@mozilla.org/scriptableinputstream;1"]
-                     .createInstance(Components.interfaces.nsIScriptableInputStream);
-               instream.init(stream);
-
-               var dataListener = {
-
-                  pool : pool,
-                  buffer : '',
-
-                  onStartRequest : function(request, context) {
-                  },
-
-                  onStopRequest : function(request, context, status) {
-                     instream.close();
-                     outstream.close();
-                     fDebug.inSession--;
-                     fDebug.sessionPool[this.pool] = null;
-                  },
-
-                  onDataAvailable : function(request, context, inputStream, offset, count) {
-                     var x = instream.read(count);
-                     this.buffer = this.buffer + x;
-                     if (this.buffer.indexOf('\n') != -1) {
-                        var tmp = this.buffer.split('\n');
-                        this.buffer = tmp[1];
-                        var rc = fDebug.processData(this.pool, tmp[0]);
-                        if (!rc) {
-                           fDebug.logMessage(transport.host, 'Error processing payload.');
-                           fCore.debug('Processing fDebug data failed:' + tmp[0]);
-                           outstream.write('ERROR\n', 6);
-                           return;
-                        }
-                        if (fDebug.sessionPool[this.pool] && fDebug.sessionPool[this.pool].replyBuffer) {
-                           outstream.write(fDebug.sessionPool[this.pool].replyBuffer + '\n',
-                                 fDebug.sessionPool[this.pool].replyBuffer.length + 1);
-                           fDebug.sessionPool[this.pool].replyBuffer = null;
-                        } else {
-                           outstream.write('OK\n', 3);
-                        }
-                     }
-                  }
-               };
-
-               var pump = Components.classes["@mozilla.org/network/input-stream-pump;1"]
-                     .createInstance(Components.interfaces.nsIInputStreamPump);
-               pump.init(stream, -1, -1, 0, 0, false);
-               pump.asyncRead(dataListener, null);
-
-            } catch (ex) {
-               fDebug.logMessage('', 'Accept error');
-               document.getElementById('stateLabel').value = 'Accept error';
-               // dump("::"+ex);
-            }
-         },
-
-         onStopListening : function(serv, status) {
-         }
-      };
-
       try {
          this.socket = Components.classes["@mozilla.org/network/server-socket;1"]
                .createInstance(Components.interfaces.nsIServerSocket);
-         this.socket.init(this.settings['port'], false, 0);
-         this.socket.asyncListen(socketListener);
+         this.socket.init(fDebugSettings.port, false, 0);
+         this.socket.asyncListen(fSocketListener);
          document.getElementById('stateLabel').value = 'Ready...';
 
-         if (this.settings['proxyenable']) {
-            dump('proxy enabled\n');
-            var proxydata = this.settings['proxyhost'] + ':' + this.settings['proxyport'];
+         if (fDebugSettings.proxyenable) {
+            var proxydata = fDebugSettings.proxyhost + ':' + fDebugSettings.proxyport;
             this.httpObserver = {
                observe : function(subject, topic, data) {
                   subject.QueryInterface(Components.interfaces.nsIHttpChannel);
                   subject.setRequestHeader('X-FDEBUG-PROXY', proxydata, true);
-                  subject.setRequestHeader('X-FDEBUG-UUID', fDebug.settings['uuid'], true);
+                  subject.setRequestHeader('X-FDEBUG-UUID', fDebugSettings.uuid, true);
                }
             };
             this.observerService.addObserver(this.httpObserver, "http-on-modify-request", false);
@@ -286,16 +99,16 @@ var fDebug = {
             finished : function(data, status) {
                dump('\nStatus: ' + status + '\nData:' + data + '\n');
                if (status == 0) {
-                  fDebug.logMessage(fDebug.settings['proxyhost'], 'Registration with proxy completed.');
+                  fDebug.logMessage(fDebugSettings.proxyhost, 'Registration with proxy completed.');
                } else {
-                  fDebug.logMessage(fDebug.settings['proxyhost'], 'Registration with proxy failed.');
+                  fDebug.logMessage(fDebugSettings.proxyhost, 'Registration with proxy failed.');
                }
             }
          };
 
          var transportService = Components.classes["@mozilla.org/network/socket-transport-service;1"]
                .getService(Components.interfaces.nsISocketTransportService);
-         var transport = transportService.createTransport(null, 0, this.settings['proxyhost'], this.settings['proxyport'], null);
+         var transport = transportService.createTransport(null, 0, fDebugSettings.proxyhost, fDebugSettings.proxyport, null);
          transport.setTimeout(transport.TIMEOUT_CONNECT, 10);
 
          var outstream = transport.openOutputStream(0, 0, 0);
@@ -303,8 +116,8 @@ var fDebug = {
          var message = JSON.stringify( {
             'type' : 'REGISTER',
             'payload' : {
-               'UUID' : this.settings['uuid'],
-               'PORT' : this.settings['port']
+               'UUID' : fDebugSettings.uuid,
+               'PORT' : fDebugSettings.port
             }
          }) + "\n";
          outstream.write(message, message.length);
@@ -335,7 +148,7 @@ var fDebug = {
 
       } catch (ex) {
          dump(ex);
-         this.logMessage(this.settings['proxyhost'], 'Registration with proxy failed.');
+         this.logMessage(fDebugSettings.proxyhost, 'Registration with proxy failed.');
       }
    },
 
@@ -358,7 +171,7 @@ var fDebug = {
             case 'MESSAGE':
             case 'VARIABLES':
             case 'SOURCE': {
-               if (this.settings['tabs'] && !session.tab) {
+               if (fDebugSettings.tabs && !session.tab) {
                   // server and uri should have been set first with a CONTROL
                   // request...
                   this.logMessage(session.transport.host, 'Cannot handle out of scope request');
@@ -393,7 +206,7 @@ var fDebug = {
             //dump('HELO from Server ' + payload.server + '\n');
             session.url = payload.url;
             session.server = payload.server;
-            if (!this.settings['tabs']) {
+            if (!fDebugSettings.tabs) {
                if (!this.defaultTab) {
                   this.defaultTab = this.makeTab('chrome://fdebug/content/fdebug/session.xul');
                }

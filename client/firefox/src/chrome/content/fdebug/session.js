@@ -10,6 +10,8 @@
  * 
  */
 var fDebug = parent.fDebug;
+var fDebugSettings = parent.fDebugSettings;
+
 var fDebugSession = {
 
    server: '',
@@ -37,7 +39,7 @@ var fDebugSession = {
 
          var panel = this.buildPanel();
          var pList = document.getElementById('poolList');
-         var item = pList.appendItem(parent.fDebug.sessionPool[pool].url, pool);
+         var item = pList.appendItem(fDebug.sessionPool[pool].url, pool);
          item.setAttribute('class', "listitem-iconic");
          item.setAttribute('image', 'chrome://fdebug/content/gfx/busy.gif');
          this.poolMap[pool] = {
@@ -51,15 +53,15 @@ var fDebugSession = {
             host: fDebug.sessionPool[pool].server
          };
 
-         if (fDebug.settings['expireenable']) {
+         if (fDebugSettings.expireenable) {
             var c = pList.getRowCount();
             // dump('Pool count:' + c + '\n');
-            if (c > fDebug.settings['expirelimit']) {
-               var toClear = pList.getItemAtIndex(c - fDebug.settings['expirelimit'] - 1).value;
+            if (c > fDebugSettings.expirelimit) {
+               var toClear = pList.getItemAtIndex(c - fDebugSettings.expirelimit - 1).value;
                // dump('Pool limit reached - removing pool:' + toClear + '\n');
                var x = this.poolMap[toClear].panel;
                x.parentNode.removeChild(x);
-               if (fDebug.settings['expireremove']) {
+               if (fDebugSettings.expireremove) {
                   x = this.poolMap[toClear].item;
                   x.parentNode.removeChild(x);
                } else {
@@ -289,14 +291,14 @@ var fDebugSession = {
          hbox.setAttribute('flex', '1');
          item.appendChild(hbox);
 
-         if (fDebug.settings['contextshow']) {
+         if (fDebugSettings.contextshow) {
             if (data.context) {
-               if (fDebug.settings['color'][data.context]) {
-                  this.currentColor = parent.fDebug.settings['color'][data.context];
+               if (fDebugSettings.color[data.context]) {
+                  this.currentColor = parent.fDebugSettings.color[data.context];
                } else {
-                  if (!fDebug.settings['contextlearn']) {
-                     fDebug.settings['color'][data.context] = '#ccc';
-                     fDebug.settings['contextlist'].push(data.context);
+                  if (!fDebugSettings.contextlearn) {
+                     fDebugSettings.color[data.context] = '#ccc';
+                     fDebugSettings.contextlist.push(data.context);
                      fDebug.logMessage(this.server,
                            'Learned new context "' + data.context + '" - created temporary entry with default color.');
                   }
@@ -333,7 +335,7 @@ var fDebugSession = {
 
             var subbox = document.createElementNS(XULNS, 'vbox');
             subbox.setAttribute('flex', '1');
-            if (!fDebug.settings['details']) {
+            if (!fDebugSettings.details) {
                subbox.setAttribute('collapsed', 'true');
             }
             for (x = 1; x < msgList.length; x++) {
