@@ -176,9 +176,9 @@ var fDebugSession = {
          }, 1);
          document.getElementById('searchGroup').setAttribute('collapsed', 'false');
          switch (deck.selectedIndex) {
-            case '0':
+            case 0:
                break;
-            case '1': {
+            case 1: {
                if (!this.poolMap[pool].variables) {
                   deck.selectedIndex = 0;
                   document.getElementById('processButton').checked = true;
@@ -187,7 +187,7 @@ var fDebugSession = {
                }
                break;
             }
-            case '2': {
+            case 2: {
                if (!this.poolMap[pool].source) {
                   deck.selectedIndex = 0;
                   document.getElementById('processButton').checked = true;
@@ -196,7 +196,7 @@ var fDebugSession = {
                }
                break;
             }
-            case '4': {
+            case 4: {
                deck.selectedIndex = 0;
                document.getElementById('processButton').checked = true;
             }
