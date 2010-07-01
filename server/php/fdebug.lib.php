@@ -149,15 +149,10 @@
        * @return void
        */
       public function __destruct() {
-
          if ($this->isConnected()) {
             if (!$this->varsSent) $this->sendVariables();
             if (!$this->sourceSent) $this->sendSource();
-            fflush($this->socket);
-            $this->writeSocket('CONTROL', array('action' => 'QUIT'));
-            @fflush($this->socket);
-            @fclose($this->socket);
-            $this->socket = null;
+            $this->closeSocket();
          }
       }
 
@@ -236,7 +231,7 @@
        *
        * @return boolean true on success, false on failure
        */
-      public function connectRemote($remote, $port) {
+      protected function connectRemote($remote, $port) {
          $timeout = $remote=='127.0.0.1' ? 1 : 5;
 
          $this->socket = @fsockopen($remote, $port, $errno, $errstr, $timeout);
@@ -253,7 +248,7 @@
        * @return void
        *
        */
-      public function sendHelo() {
+      protected function sendHelo() {
          $this->writeSocket('CONTROL', array(
                'action' => 'HELO',
                'url'    => $this->sessionUri,
@@ -265,14 +260,14 @@
       }
 
       public function confirm($msg) {
-         return $this->writeSocket('CONTROL', array(
+         return $this->writeSocket('INTERACTION', array(
                'action' => 'CONFIRM',
                'msg'    => $msg
          )) == 'Y' ? true : false;
       }
 
       public function prompt($msg) {
-         return $this->writeSocket('CONTROL', array(
+         return $this->writeSocket('INTERACTION', array(
                'action' => 'PROMPT',
                'msg'    => $msg
          ));
@@ -296,13 +291,19 @@
       /**
        * Close an open socket connection
        *
+       * @param boolean $hard Drop connection without sending QUIT
+       *
        * @return void
        */
-      public function closeSocket() {
+      public function closeSocket($hard = false) {
          if (!$this->isConnected()) {
             return;
          }
-         fclose($this->socket);
+         if (!$hard) {
+            $this->writeSocket('CONTROL', array('action' => 'QUIT'));
+         }
+         @fflush($this->socket);
+         @fclose($this->socket);
          $this->socket = null;
       }
 
@@ -347,16 +348,18 @@
          }
 
          $str = json_encode($obj)."\n";
+
          $x   = strlen($str);
          $rc  = @fwrite($this->socket, $str, strlen($str));
          $rc2 = @fflush($this->socket);
          if (!$rc || ($x != $rc)) {
-            $this->closeSocket();
+            $this->closeSocket(true);
             return;
          }
 
          $reply = @fgets($this->socket);
          $reply = trim($reply);
+
          switch ($reply) {
             case 'OK': {
                return;
@@ -364,7 +367,7 @@
 
             case '':
             case 'ERROR': {
-               $this->closeSocket();
+               $this->closeSocket(true);
                return;
             }
 
