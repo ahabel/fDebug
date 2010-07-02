@@ -29,14 +29,11 @@ var fDebugSession = {
    },
 
    handleRequest: function(pool, req) {
-      // dump('SESSION REQUEST: '+req.type+'\n');
       if (this.server == '') {
          this.server = fDebug.sessionPool[pool].server;
          document.title = this.server;
       }
       if (!this.poolMap[pool]) {
-         // dump('Need to build new panel:' + pool + '\n');
-
          var panel = this.buildPanel();
          var pList = document.getElementById('poolList');
          var item = pList.appendItem(fDebug.sessionPool[pool].url, pool);
