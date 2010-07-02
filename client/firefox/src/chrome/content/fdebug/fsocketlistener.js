@@ -41,8 +41,8 @@ var fSocketListener = {
 
          if (check.value) { // save option marked
             var key = (result ? 'whitelist' : 'blacklist');
-            fDebug.settings[key].push(transport.host);
-            fPreference.setValue('fdebug.' + key, fDebug.settings[key].join(' '), 'STRING');
+            fDebugSettings[key].push(transport.host);
+            fPreference.setValue('fdebug.' + key, fDebugSettings[key].join(' '), 'STRING');
          }
 
          if (!result) { // request refused - leave
