@@ -185,7 +185,7 @@ var fCore = {
             .createInstance(Components.interfaces.nsIBinaryInputStream);
       binary.setInputStream(stream);
 
-      var str = binary.readBytes(binary.available())
+      var str = binary.readBytes(binary.available());
 
       binary.close();
       bstream.close();
