@@ -48,7 +48,7 @@ var fDebugSetup = {
          item.setAttribute('image', "chrome://fdebug/content/gfx/" + mode + ".png");
       }
 
-      var contextList = document.getElementById('conf:contextList')
+      var contextList = document.getElementById('conf:contextList');
       if (fDebugSettings.contextlist.length > 0) {
          for ( var y = 0; y < fDebugSettings.contextlist.length; y++) {
             var item = document.createElementNS(XULNS, 'richlistitem');
