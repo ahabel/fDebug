@@ -97,7 +97,6 @@ var fDebug = {
       try {
          var listener = {
             finished : function(data, status) {
-               dump('\nStatus: ' + status + '\nData:' + data + '\n');
                if (status == 0) {
                   fDebug.logMessage(fDebugSettings.proxyhost, 'Registration with proxy completed.');
                } else {
@@ -153,7 +152,6 @@ var fDebug = {
    },
 
    processData : function(pool, data) {
-      // dump('\n\nRAW: '+data+'\n');
       var session = this.sessionPool[pool];
       try {
          var request = JSON.parse(data);
@@ -165,7 +163,7 @@ var fDebug = {
             }
 
             case 'INTERACTION': {
-               return this.processInteraction(session, pool, request.payload);
+               return fDebugInteraction.process(session, pool, request.payload);
             }
 
             case 'MESSAGE':
@@ -239,27 +237,6 @@ var fDebug = {
       }
       return true;
    },   
-   
-   processInteraction: function(session, pool, payload) {
-      switch (payload.action) {
-         case 'CONFIRM': {
-            this.logMessage(session.server, 'Processing confirm request');
-            this.sessionPool[pool].replyBuffer = confirm(payload.msg) ? 'Y' : 'N';
-            break;
-         }
-         case 'PROMPT': {
-            this.logMessage(session.server, 'Processing prompt request');
-            this.sessionPool[pool].replyBuffer = prompt(payload.msg);
-            break;
-         }
-         default: {
-            this.logMessage(session.server, 'unkown interaction action (' + payload.action + ')');
-            // dump('Unknown action: '+request.payload.action+'\n');
-            return false;
-         }
-      }
-      return true;
-   },
 
    messageProxy : function(pool, request) {
       try {
@@ -347,12 +324,12 @@ var fDebug = {
             + s.substr(s.length - 2, 2));
       item.appendChild(cell);
 
-      var cell = document.createElementNS(XULNS, 'listcell');
+      cell = document.createElementNS(XULNS, 'listcell');
       cell.setAttribute('style', 'padding-right:4px;');
       cell.setAttribute('label', ip);
       item.appendChild(cell);
 
-      var cell = document.createElementNS(XULNS, 'listcell');
+      cell = document.createElementNS(XULNS, 'listcell');
       cell.setAttribute('label', msg);
       item.appendChild(cell);
 
