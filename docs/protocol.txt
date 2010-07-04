@@ -193,7 +193,7 @@
       request has to return immediately.
    
       Request:   
-      { type: 'INTERACTIVE', payload: { action: 'wait', message: '...', timeout: '' } }   
+      { type: 'INTERACTIVE', payload: { action: 'wait', message: '...', seconds: '' } }   
 
       Reply:
       OK | ERROR
@@ -243,13 +243,11 @@
       debugging continues. It should be used with high caution, since it probably modifies the
       execution path. If the client is not allowed to or incapable of performing a select,
       the default value has to be returned immediately.
-
-      Choice options are passed as an array of objects, each containing a label property for display
-      and a value property which will get returned in case this item has been selected.
+      Choice options are passed as an array of strings to choose from.
 
       Request:   
       { type: 'INTERACTIVE', payload: { 
-            action: 'select', message: '...', options: [ { label: '', value: '' }], default: '' } 
+            action: 'select', message: '...', options: [ '....', ... ], default: '' } 
       }   
    
       Reply:
