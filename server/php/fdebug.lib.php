@@ -259,17 +259,43 @@
          $this->writeSocket('CONTROL', array('action' => 'PING'));
       }
 
-      public function confirm($msg) {
+      public function wait($msg, $seconds) {
+         return $this->writeSocket('INTERACTION', array(
+               'action' => 'WAIT',
+               'msg'    => $msg,
+               'seconds'=> $seconds
+         ));
+      }
+      
+      public function confirm($msg, $default) {
          return $this->writeSocket('INTERACTION', array(
                'action' => 'CONFIRM',
-               'msg'    => $msg
+               'msg'    => $msg,
+               'default'=> $default ? 'Y' : 'N'
          )) == 'Y' ? true : false;
       }
 
-      public function prompt($msg) {
+      public function password($msg, $default) {
+         return $this->writeSocket('INTERACTION', array(
+               'action' => 'PASSWORD',
+               'msg'    => $msg,
+               'default'=> $default
+         ));
+      }
+
+      public function prompt($msg, $default) {
          return $this->writeSocket('INTERACTION', array(
                'action' => 'PROMPT',
-               'msg'    => $msg
+               'msg'    => $msg,
+               'default'=> $default
+         ));
+      }
+      public function select($msg, Array $options, $default) {
+         return $this->writeSocket('INTERACTION', array(
+               'action' => 'SELECT',
+               'msg'    => $msg,
+               'options'=> $options,
+               'default'=> $default         
          ));
       }
 
