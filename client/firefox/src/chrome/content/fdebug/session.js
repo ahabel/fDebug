@@ -161,7 +161,7 @@ var fDebugSession = {
       document.getElementById('processFilter').value = '';
       var deck = document.getElementById('displayDeck');
 
-      if (this.poolMap[pool].panel) {
+      if (this.poolMap[pool] && this.poolMap[pool].panel) {
          this.currentPool = pool;
          document.getElementById('clearBCAST').setAttribute('disabled', 'false');
          document.getElementById('detailGroup').collapsed = true;
