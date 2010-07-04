@@ -14,6 +14,7 @@
    <script type="application/x-javascript" src="chrome://fdebug/content/common/fpreference.js"/>   
    <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebugsettings.js"/>
    <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fsocketlistener.js"/>
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebuginteraction.js"/>
    <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebug.js"/>
    
    <popupset>
