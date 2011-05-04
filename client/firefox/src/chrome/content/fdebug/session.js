@@ -156,8 +156,7 @@ var fDebugSession = {
       this.addMessage(listbox, request);
    },
 
-   switchPanel: function(pool) {
-      // dump('Switchpanel: '+pool+'\n');
+   switchPanel: function(pool) {      
       document.getElementById('processFilter').value = '';
       var deck = document.getElementById('displayDeck');
 
@@ -175,9 +174,10 @@ var fDebugSession = {
          }, 1);
          document.getElementById('searchGroup').setAttribute('collapsed', 'false');
          switch (deck.selectedIndex) {
-            case 0:
+            case '0': {
                break;
-            case 1: {
+            }
+            case '1': {
                if (!this.poolMap[pool].variables) {
                   deck.selectedIndex = 0;
                   document.getElementById('processButton').checked = true;
@@ -186,7 +186,7 @@ var fDebugSession = {
                }
                break;
             }
-            case 2: {
+            case '2': {
                if (!this.poolMap[pool].source) {
                   deck.selectedIndex = 0;
                   document.getElementById('processButton').checked = true;
@@ -195,7 +195,7 @@ var fDebugSession = {
                }
                break;
             }
-            case 4: {
+            case '4': {
                deck.selectedIndex = 0;
                document.getElementById('processButton').checked = true;
             }
@@ -327,15 +327,18 @@ var fDebugSession = {
 
          if (msgList.length > 1) {
             var img = document.createElementNS(XULNS, 'image');
-            img.setAttribute('src', 'chrome://fdebug/content/gfx/more.gif');
+            img.setAttribute('src', 'chrome://fdebug/content/gfx/expanded.png');
+            var self=this;
+            img.onclick=function(){self.toggleCurrent();};
             ibox.appendChild(img);
 
             var subbox = document.createElementNS(XULNS, 'vbox');
             subbox.setAttribute('flex', '1');
             if (!fDebugSettings.details) {
                subbox.setAttribute('collapsed', 'true');
+               img.setAttribute('src', 'chrome://fdebug/content/gfx/right.png');
             }
-            for (x = 1; x < msgList.length; x++) {
+            for (var x = 1; x < msgList.length; x++) {
                var sublabel = document.createElementNS(XULNS, 'label');
                sublabel.setAttribute('value', msgList[x]);
                subbox.appendChild(sublabel);
@@ -461,13 +464,27 @@ var fDebugSession = {
          item.hidden = !show;
       }
    },
+   
+   toggleCurrent: function() {
+      var vbox = this.currentItem.getElementsByTagName('vbox')[2];
+      if (vbox) {
+         if (vbox.hasAttribute('collapsed')) {
+            vbox.removeAttribute('collapsed');
+            this.currentItem.getElementsByTagName('image')[1].src='chrome://fdebug/content/gfx/expanded.png';            
+         } else {
+            vbox.setAttribute('collapsed', 'true');
+            this.currentItem.getElementsByTagName('image')[1].src='chrome://fdebug/content/gfx/right.png';
+         }
+      }
+   },
 
    itemSelect: function(listbox) {
-      var vbox;
-      if (this.currentItem) {
-         vbox = this.currentItem.getElementsByTagName('vbox')[2];
+      
+      if (this.currentItem && !fDebugSettings.details) {
+         var vbox = this.currentItem.getElementsByTagName('vbox')[2];
          if (vbox) {
             vbox.setAttribute('collapsed', 'true');
+            this.currentItem.getElementsByTagName('image')[1].src='chrome://fdebug/content/gfx/right.png';
          }
       }
 
@@ -485,11 +502,13 @@ var fDebugSession = {
       document.getElementById('detailText2').value = line2;
       document.getElementById('detailText3').value = line3;
       document.getElementById('detailGroup').removeAttribute('collapsed');
-
-      vbox = obj.getElementsByTagName('vbox')[2];
+      
+      var vbox = obj.getElementsByTagName('vbox')[2];
       if (vbox) {
          vbox.removeAttribute('collapsed');
+         obj.getElementsByTagName('image')[1].src='chrome://fdebug/content/gfx/expanded.png';
       }
+      
       listbox.ensureSelectedElementIsVisible();
    },
 
