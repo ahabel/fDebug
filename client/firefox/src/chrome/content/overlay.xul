@@ -2,7 +2,9 @@
 
 <overlay id="fcmsv5CoreOverlay" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-	<script type="text/javascript" src="chrome://fdebug/content/overlay.js" />
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fpreference.js"/>   
+   <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/fdebugsettings.js"/>
+	<script type="application/x-javascript" src="chrome://fdebug/content/overlay.js" />
 
 	<!-- seamonkey tools menu -->
 	<menupopup id="taskPopup">	

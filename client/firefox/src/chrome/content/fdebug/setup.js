@@ -9,8 +9,13 @@
  * @version SVN: $Revision$
  * 
  */
-var fDebug = parent.fDebug;
-var fDebugSettings = parent.fDebugSettings;
+
+var ref = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+            .getService(Components.interfaces.nsIWindowMediator)
+            .getMostRecentWindow("navigator:browser");
+
+var fPreference = ref.fPreference;
+var fDebugSettings = ref.fDebugSettings;
 
 var fDebugSetup = {
 

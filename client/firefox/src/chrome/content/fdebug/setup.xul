@@ -9,8 +9,7 @@
    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
    onload="fDebugSetup.init();">
    
-   <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js"/>
-   <script type="application/x-javascript" src="chrome://fdebug/content/common/fpreference.js"/>
+   <script type="application/x-javascript" src="chrome://fdebug/content/common/fcore.js"/>   
    <script type="application/x-javascript" src="chrome://fdebug/content/fdebug/setup.js"/>
    
    <grid flex="1">
@@ -33,8 +32,7 @@
                   <checkbox label="&setup.tabs.label;" value="1" id="conf:tabs" oncommand="fDebugSetup.onChange();" />
                   <checkbox label="&setup.details.label;" value="1" id="conf:details" oncommand="fDebugSetup.onChange();" />
                   <checkbox label="&setup.interaction.label;" value="1" id="conf:interaction" oncommand="fDebugSetup.onChange();" />                      
-                  <checkbox label="&setup.context.label;" value="1" id="conf:context:show" oncommand="fDebugSetup.onChange();" />
-                  <checkbox label="&setup.context.learn;" value="1" id="conf:context:learn" oncommand="fDebugSetup.onChange();" />
+                  <checkbox label="&setup.context.label;" value="1" id="conf:context:show" oncommand="fDebugSetup.onChange();" />                  
                   <hbox align="center">
                      <checkbox label="&setup.expire.enable;" value="1" id="conf:expire:enable" oncommand="fDebugSetup.onChange();" />
                      <textbox id="conf:expire:limit" style="width:60px;" type="number" min="2" onchange="fDebugSetup.onChange();" />
@@ -87,7 +85,6 @@
                <caption>
                   <label class="smallcaption" value="&setup.server;"/>
                </caption>
-               
                <listbox style="min-width:150px" id="conf:iplist" onselect="fDebugSetup.selectHost();">
                   <listhead>
                      <listheader label="&head.address;"/>               
@@ -107,23 +104,26 @@
          
             </groupbox>
       
-            <groupbox class="topbox" orient="horizontal" style="width:350px;">
+            <groupbox class="topbox" orient="vertical" style="width:350px;">
                <caption>
                   <label class="smallcaption" value="&setup.context;"/>
                </caption>
-         
-               <richlistbox style="min-width:250px" id="conf:contextList" onselect="fDebugSetup.selectContext();" />
-               
-               <vbox flex="0">
-                  <textbox id="currentContext" oninput="fDebugSetup.verifyContext();" />
-                  <hbox>
+               <hbox>
+                  <richlistbox style="min-width:250px" id="conf:contextList" onselect="fDebugSetup.selectContext();" />
+                  <vbox flex="0">
+                     <textbox id="currentContext" oninput="fDebugSetup.verifyContext();" />
+                     <hbox>
+                        <spacer flex="1"/>
+                        <button label="&button.update;" disabled="true" id="but:ctxupdate" oncommand="fDebugSetup.updateContext();" />
+                     </hbox>
                      <spacer flex="1"/>
-                     <button label="&button.update;" disabled="true" id="but:ctxupdate" oncommand="fDebugSetup.updateContext();" />
-                  </hbox>
-                  <spacer flex="1"/>
-                  <button image="chrome://fdebug/content/gfx/clear.png" label="&button.remove;" disabled="true" id="but:ctxremove" oncommand="fDebugSetup.removeContext();"/>
-               </vbox>
-         
+                     <button image="chrome://fdebug/content/gfx/clear.png" label="&button.remove;" disabled="true" id="but:ctxremove" oncommand="fDebugSetup.removeContext();"/>
+                  </vbox>
+               </hbox>
+               <hbox>
+                  <checkbox label="&setup.context.learn;" value="1" id="conf:context:learn" oncommand="fDebugSetup.onChange();" />
+                  <spacer flex="1" />
+               </hbox>
             </groupbox>
             
          </row>

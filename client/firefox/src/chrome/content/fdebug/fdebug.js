@@ -9,6 +9,14 @@
  * @version %version
  * 
  */
+
+var ref = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+            .getService(Components.interfaces.nsIWindowMediator)
+            .getMostRecentWindow("navigator:browser");
+
+var fPreference = ref.fPreference;
+var fDebugSettings = ref.fDebugSettings;
+
 var fDebug = {
 
    observerService : Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService),
