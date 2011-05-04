@@ -7,16 +7,15 @@ echo -n "Enter version (latest: $latest): "
 read VERSION
 if [ -z "$VERSION" ]; then
     VERSION=$latest
+    echo $latest >./latest
 fi
-rm -f fdebug.xpi install.rdf chrome/fdebug.jar 2>&1 >/dev/null
+rm -rf fdebug.xpi install.rdf content locale 2>&1 >/dev/null
 sed "s/%version/$VERSION/" install.rdf.tmpl > install.rdf
 
-mkdir chrome 2>&1 >/dev/null
-
 cd ../src/chrome
-zip -r ../../build/chrome/fdebug.jar content locale
+cp -r content locale ../../build
 
 cd ../../build
-zip -r fdebug.xpi chrome.manifest install.rdf chrome
+zip -r fdebug.xpi chrome.manifest install.rdf content locale
 
 echo "Build complete."
