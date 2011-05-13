@@ -4,7 +4,7 @@ fDebug
 To make use of fDebug a client as well as a server part needs to be used. While logically a client,
 the fdebug client app or extension is technically the server - waiting for debug information to arrive.
 
-You can download a prebuild XPI from http://fdebug.de or http://addons.mozilla.org.
+You can download a prebuild XPI from http://fdebug.de or https://addons.mozilla.org/de/firefox/addon/fdebug-client/.
 
 XPI Building
 ------------
