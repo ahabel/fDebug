@@ -14,6 +14,9 @@ var ref = Components.classes["@mozilla.org/appshell/window-mediator;1"]
             .getService(Components.interfaces.nsIWindowMediator)
             .getMostRecentWindow("navigator:browser");
 
+var fDebugWindow = Components.classes["@mozilla.org/appshell/window-mediator;1"]
+                     .getService(Components.interfaces.nsIWindowMediator)
+                     .getMostRecentWindow("fdebug:main");
 var fPreference = ref.fPreference;
 var fDebugSettings = ref.fDebugSettings;
 
@@ -235,13 +238,13 @@ var fDebugSetup = {
          fDebugSettings.contextlist.push(o.getAttribute('name'));
       }
       fPreference.setValue('fdebug.context.list', fDebugSettings.contextlist.join(' '), 'STRING');
-
+      
       // new port?
-      var restart = false;
-      if ((fDebugSettings.port != document.getElementById('conf:port').value || document
+      var restart = false;      
+      if (fDebugWindow && (fDebugSettings.port != document.getElementById('conf:port').value || document
             .getElementById('conf:proxy:enable').checked)
-            && fDebug.socket) {
-         fDebug.stopService();
+            && fDebugWindow.fDebug.socket) {
+         fDebugWindow.fDebug.stopService();
          restart = true;
       }
 
@@ -274,7 +277,7 @@ var fDebugSetup = {
       document.getElementById('but:save').disabled = true;
 
       if (restart) {
-         fDebug.startService();
+         fDebugWindow.fDebug.startService();
       }
 
    }
